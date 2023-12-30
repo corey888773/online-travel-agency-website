@@ -1,0 +1,63 @@
+[
+    {
+      "name": "Berlin",
+      "destination": "Berlin",
+      "startDate": "2022-09-01T00:00:00.000Z",
+      "endDate": "2022-09-01T00:00:00.000Z",
+      "description": "Description 1",
+      "unitPrice": 123.456,
+      "currency": "EUR",
+      "maxSlots": 5,
+      "reservedSlots": 4,
+      "image": "assets/trips_images/berlin_big.jpeg"
+    },
+    {
+      "name": "Sydney",
+      "destination": "Sydney",
+      "startDate": "2022-09-01T00:00:00.000Z",
+      "endDate": "2022-09-01T00:00:00.000Z",
+      "description": "Description 2",
+      "unitPrice": 789.012,
+      "currency": "EUR",
+      "maxSlots": 3,
+      "reservedSlots": 1,
+      "image": "assets/trips_images/sydney_big.jpeg"
+    },
+    {
+      "name": "Cracow",
+      "destination": "Cracow",
+      "startDate": "2022-09-01T00:00:00.000Z",
+      "endDate": "2022-09-01T00:00:00.000Z",
+      "description": "Description 3",
+      "unitPrice": 345.678,
+      "currency": "EUR",
+      "maxSlots": 7,
+      "reservedSlots": 4,
+      "image": "assets/trips_images/cracow_big.jpeg"
+
+    },
+    {
+      "name": "Chicago",
+      "destination": "Chicago",
+      "startDate": "2022-09-01T00:00:00.000Z",
+      "endDate": "2022-09-01T00:00:00.000Z",
+      "description": "Description 4",
+      "unitPrice": 901.234,
+      "currency": "EUR",
+      "maxSlots": 2,
+      "reservedSlots": 0,
+      "image": "assets/trips_images/chicago_big.jpeg"
+    },
+    {
+      "name": "Warsaw",
+      "destination": "Warsaw",
+      "startDate": "2022-09-01T00:00:00.000Z",
+      "endDate": "2022-09-01T00:00:00.000Z",
+      "description": "Description 5",
+      "unitPrice": 567.89,
+      "currency": "EUR",
+      "maxSlots": 6,
+      "reservedSlots": 3,
+      "image": "assets/trips_images/warsaw_big.jpeg"
+    }
+  ]

@@ -1,0 +1,21 @@
+<nav class="navbar bg-dark navbar-dark navbar-expand-md sticky-top mb-5">
+  <a href="#" class="navbar-brand ms-3">
+      Online Travel Agency
+  </a>
+  <button type="button" class="navbar-toggler navbar-toggler-right" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+       <span class="navbar-toggler-icon"></span>
+  </button>
+  
+  <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto p-2 text-center" id="navScrollspy">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/offers" routerLinkActive="active" ariaCurrentWhenActive="page">Offers</a>
+          </li>
+      </ul> 
+  </div>
+</nav>
+
+<router-outlet></router-outlet>

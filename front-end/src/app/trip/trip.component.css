@@ -1,0 +1,16 @@
+.trip {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
+    border:2px solid #ccc;
+}
+
+.warning {
+    background-color: rgb(255, 255, 195);
+}
+
+.photo {
+    width: 200px;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 50%;
+}

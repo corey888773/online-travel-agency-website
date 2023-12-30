@@ -1,0 +1,11 @@
+<section class="container d-flex flex-row justify-content-around align-items-center">
+    <div id="counter">
+        <p>Number of offers: {{trips.length}}</p>
+        <p>Number of reserved offers: {{countReservedTrips()}}</p>
+    </div>
+    <input type="text" [(ngModel)]="searchTerm" (input)="searchFor($event)" placeholder="Search trips">
+</section>
+<app-trip *ngFor="let trip of trips | tripSearch: searchTerm" 
+[trip]="trip" 
+[borderColour]="calculateTripColour(trip)"
+(removeTrip)="removeTrip($event)"></app-trip>
