@@ -5,6 +5,7 @@ import (
 	"errors"
 	"time"
 
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -37,13 +38,18 @@ func (r *MongoDbTripRepository) FindByID(id string) (*Trip, error) {
 	defer cancel()
 
 	trip := Trip{}
-	result := r.collection.FindOne(ctx, id)
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return nil, err
+	}
+
+	result := r.collection.FindOne(ctx, bson.M{"_id": objectID})
 
 	if err := result.Err(); err != nil {
 		return nil, err
 	}
 
-	err := result.Decode(&trip)
+	err = result.Decode(&trip)
 	{
 		if err != nil {
 			return nil, err

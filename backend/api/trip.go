@@ -56,3 +56,21 @@ func (s *Server) addTrip(ctx *gin.Context) {
 		ID: objectID,
 	})
 }
+
+type getTripResponse struct {
+	Trip data.Trip `json:"trip"`
+}
+
+func (s *Server) getTrip(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	trip, err := s.tripRepository.FindByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, getTripResponse{
+		Trip: *trip,
+	})
+}
