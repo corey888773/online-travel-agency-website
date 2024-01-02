@@ -1,4 +1,5 @@
 export interface Trip {
+    uuid: string;
     name: string;
     destination: string;
     startDate: Date;
@@ -10,4 +11,6 @@ export interface Trip {
     reservedSlots: number;
     image: string;
     reserved: boolean;
+    averageRating: number;
+    ratings: number[];
 }

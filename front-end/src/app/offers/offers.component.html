@@ -1,11 +1,17 @@
-<section class="container d-flex flex-row justify-content-around align-items-center">
+<div class="container border-dark border p-3 pt-0">
+<app-basket-widget></app-basket-widget>
+<section id="stats" class="container d-flex flex-row justify-content-around align-items-center">
     <div id="counter">
-        <p>Number of offers: {{trips.length}}</p>
+        <p>Number of offers: {{filteredTrips.length}}</p>
         <p>Number of reserved offers: {{countReservedTrips()}}</p>
     </div>
-    <input type="text" [(ngModel)]="searchTerm" (input)="searchFor($event)" placeholder="Search trips">
 </section>
-<app-trip *ngFor="let trip of trips | tripSearch: searchTerm" 
+
+<section id="filters">
+    <app-offers-filter [trips]="trips" (filteredTrips)="filterTrips($event)"></app-offers-filter>
+</section>
+<app-trip *ngFor="let trip of filteredTrips" 
 [trip]="trip" 
 [borderColour]="calculateTripColour(trip)"
 (removeTrip)="removeTrip($event)"></app-trip>
+</div>

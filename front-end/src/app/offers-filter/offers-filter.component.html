@@ -1,0 +1,55 @@
+<!-- <p>offers-filter works!</p>
+<p>Search term: {{searchTerm}}</p>
+<p>Filtered trips: {{tripsLength}}</p>
+<p>filterByPriceMin: {{filterByPriceMin}}</p>
+<p>filterByPriceMax: {{filterByPriceMax}}</p>
+<p>filterByRatings: {{ratingsFilter}}</p>
+<p>filterByDestination: {{filterByDestination}}</p>
+<p>filterByDatesMin: {{filterByDatesMin}}</p>
+<p>filterByDatesMax: {{filterByDatesMax}}</p>
+<p>sortBy: {{sortBy}}</p> -->
+
+<section id="filters" class="container border border-dark rounded p-3">
+    <form>
+        <div class="d-flex flex-column">
+            <input type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (input)="searchFor($event)" placeholder="Search trips">
+            <label for="price">Price</label>
+            <input type="number" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByPriceMin" (input)="applyFilters()">
+            <input type="number" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByPriceMax" (input)="applyFilters()">
+
+            <label for="ratings">Ratings</label>
+            <div id="rating-checkboxes">
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[0]" (change)="applyFilters()" [value]="false">
+                <label for="ratings">5</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[1]" (change)="applyFilters()" [value]="false">
+                <label for="ratings">4</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[2]" (change)="applyFilters()" [value]="false">
+                <label for="ratings">3</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[3]" (change)="applyFilters()" [value]="false">
+                <label for="ratings">2</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[4]" (change)="applyFilters()" [value]="false">
+                <label for="ratings">1</label>
+            </div>
+
+            <label for="destination">Destination</label>
+            <select id="destination" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDestination" [(ngModel)]="filterByDestination" (change)="applyFilters()">
+                <option *ngFor="let destination of getDestinationOptions()" [value]="destination" >{{destination}}</option>
+            </select>
+
+            <label for="dates">Dates</label>
+            <input type="date" id="dates" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDatesMin" (input)="applyFilters()">
+            <input type="date" id="dates" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDatesMax" (input)="applyFilters()">
+
+            <label for="sortBy">Sort by</label>
+            <select id="sortBy" [ngModelOptions]="{standalone: true}" [(ngModel)]="sortBy" (change)="applyFilters()">
+                <option value="price">Price</option>
+                <option value="name">Name</option>
+                <option value="ratings">Ratings</option>
+                <option value="destination">Destination</option>
+                <option value="dates">Dates</option>
+            </select>
+        </div>
+        <button type="button" (click)="applyFilters()">Filter</button>
+        <button type="button" (click)="resetFilters()">Reset filters</button>
+    </form>
+</section>

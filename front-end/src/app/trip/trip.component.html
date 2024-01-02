@@ -29,4 +29,9 @@
         <button class="btn btn-danger pl-4 pr-4" (click)="remove()">Remove</button>
     </div>
 
+    <div id="rating">
+        <p>Average rating: {{trip.averageRating.toFixed(2)}}</p>
+        <p>Number of reviews: {{trip.ratings.length}}</p>
+        <button class="btn btn-primary pl-4 pr-4" (click)="rate()">Rate</button>
+    </div>
 </section>

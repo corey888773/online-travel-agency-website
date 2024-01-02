@@ -1,34 +1,46 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TripComponent } from '../trip/trip.component';
+import { TripFormComponent } from '../trip-form/trip-form.component';
 import { Trip } from '../trip';
 import { OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
-import { TripSearchPipe } from '../trip-search.pipe';
 import { FormsModule } from '@angular/forms';
+import { OffersFilterComponent } from '../offers-filter/offers-filter.component';
+import { Basket } from '../basket';
+import { BasketWidgetComponent } from '../basket-widget/basket-widget.component';
 
 @Component({
   selector: 'app-offers',
   standalone: true,
-  imports: [CommonModule, TripComponent, TripSearchPipe, FormsModule],
+  imports: [
+    CommonModule, 
+    TripComponent, 
+    TripFormComponent, 
+    FormsModule,
+    OffersFilterComponent,
+    BasketWidgetComponent
+  ],
   templateUrl: './offers.component.html',
   styleUrl: './offers.component.css'
 })
 export class OffersComponent implements OnInit{
   trips: Trip[] = [];
+  filteredTrips: Trip[] = [];
+  basket!: Basket;
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,    
+    ) {
+      this.basket = apiService.getBasket();
+    }
 
   ngOnInit(): void {
     this.apiService.getTrips().subscribe((data: any[]) => {
       this.trips = data.sort((a, b) => a.unitPrice - b.unitPrice);
+      this.filteredTrips = this.trips;
     });
   } 
-
-  searchTerm: string = '';
-  searchFor(event: Event) {
-    this.searchTerm = (event.target as HTMLInputElement).value;
-  }
 
   calculateTripColour(trip : Trip): string {
     // gradient from green to red based on index price
@@ -52,6 +64,10 @@ export class OffersComponent implements OnInit{
     this.apiService.removeTrip(event).subscribe(() => {
       this.trips = this.trips.filter(trip => trip.name !== event.name);
     });
+  }
+
+  filterTrips($event : Trip[]) {
+    this.filteredTrips = $event;
   }
 }
 

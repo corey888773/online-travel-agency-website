@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Trip } from '../trip';
+import { ApiService } from '../api.service';
 
 @Component({
   selector: 'app-trip',
@@ -15,6 +16,8 @@ export class TripComponent {
   @Input() borderColour: string = "black";
 
   @Output() removeTrip = new EventEmitter<Trip>();
+
+  constructor(private apiService : ApiService) { }
 
   remove(): void {
     this.removeTrip.emit(this.trip);
@@ -47,11 +50,14 @@ export class TripComponent {
     this.trip.reserved = true;
 
     if (this.isFull()) {
+      this.apiService.reserveTrip(this.trip, 1)
       alert("This trip is now full!")
     } else if (this.isAlmostFull()) {
+      this.apiService.reserveTrip(this.trip, 1)
       alert("There are only a few slots left!")
     }
     else {
+      this.apiService.reserveTrip(this.trip, 1)
       alert("You have successfully reserved a slot!")
     }
   }
@@ -59,13 +65,23 @@ export class TripComponent {
   cancel(): void {
     this.trip.reservedSlots--;
     this.trip.reserved = false;
+    this.apiService.cancelReservation(this.trip)
     alert("You have successfully canceled your reservation!")
   }
 
-
-
   calculatePrice(event : Event): void {
     this.adjustedPrice = this.trip.unitPrice * this.currenciesMap[(event.target as HTMLInputElement).value];
+  }
+
+  rate(): void {
+    const rating = parseInt(prompt("Please enter your rating (1-5):") || "0");
+    if (rating >= 1 && rating <= 5) {
+      this.trip.ratings.push(rating);
+      this.trip.averageRating = this.trip.ratings.reduce((a, b) => a + b, 0) / this.trip.ratings.length;
+      alert("Thank you for your rating!")
+    } else {
+      alert("Please enter a valid rating!")
+    }
   }
 }
 
