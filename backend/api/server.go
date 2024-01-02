@@ -31,6 +31,9 @@ func (s *Server) SetupRouter() {
 	// trip routes
 	s.router.POST("/trips", s.addTrip)
 	s.router.GET("/trips/:id", s.getTrip)
+	s.router.GET("/trips", s.listTrips)
+	s.router.PATCH("/trips/:id", s.updateTrip)
+	s.router.DELETE("/trips/:id", s.deleteTrip)
 
 	// file server
 	s.router.Static("/public", "./public")

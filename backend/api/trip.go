@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type addTripRequest struct {
+type addOrUpdateTripRequest struct {
 	Name        string         `json:"name" binding:"required"`
 	UnitPrice   string         `json:"price" binding:"required"`
 	Destination string         `json:"destination" binding:"required"`
@@ -27,7 +27,7 @@ type addTripResponse struct {
 }
 
 func (s *Server) addTrip(ctx *gin.Context) {
-	var request addTripRequest
+	var request addOrUpdateTripRequest
 	if err := ctx.ShouldBindJSON(&request); err != nil {
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
 		return
@@ -72,5 +72,68 @@ func (s *Server) getTrip(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, getTripResponse{
 		Trip: *trip,
+	})
+}
+
+type listTripsResponse struct {
+	Trips []data.Trip `json:"trips"`
+}
+
+func (s *Server) listTrips(ctx *gin.Context) {
+	trips, err := s.tripRepository.FindAll()
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, listTripsResponse{
+		Trips: trips,
+	})
+}
+
+func (s *Server) updateTrip(ctx *gin.Context) {
+	var request addOrUpdateTripRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	id := ctx.Param("id")
+
+	trip := data.Trip{
+		Name:        request.Name,
+		UnitPrice:   request.UnitPrice,
+		Destination: request.Destination,
+		StartDate:   request.StartDate,
+		EndDate:     request.EndDate,
+		ImgUrl:      request.ImgUrl,
+		ImgAlt:      request.ImgAlt,
+		Currency:    request.Currency.String(),
+		MaxGuests:   request.MaxGuests,
+		Available:   request.Available,
+	}
+
+	err := s.tripRepository.Update(id, &trip)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"succes": true,
+	})
+}
+
+func (s *Server) deleteTrip(ctx *gin.Context) {
+	id := ctx.Param("id")
+
+	err := s.tripRepository.Delete(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"succes": true,
 	})
 }
