@@ -41,7 +41,7 @@ func (s *Server) addTrip(ctx *gin.Context) {
 		EndDate:     request.EndDate,
 		ImgUrl:      request.ImgUrl,
 		ImgAlt:      request.ImgAlt,
-		Currency:    request.Currency.String(),
+		Currency:    request.Currency,
 		MaxGuests:   request.MaxGuests,
 		Available:   request.Available,
 	}
@@ -108,7 +108,7 @@ func (s *Server) updateTrip(ctx *gin.Context) {
 		EndDate:     request.EndDate,
 		ImgUrl:      request.ImgUrl,
 		ImgAlt:      request.ImgAlt,
-		Currency:    request.Currency.String(),
+		Currency:    request.Currency,
 		MaxGuests:   request.MaxGuests,
 		Available:   request.Available,
 	}
