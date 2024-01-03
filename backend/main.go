@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/corey888773/online-travel-agency-website/api"
+	"github.com/corey888773/online-travel-agency-website/token"
 	"github.com/corey888773/online-travel-agency-website/util"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
@@ -28,7 +29,12 @@ func main() {
 		log.Fatal().Err(err).Msg("Failed to connect to MongoDB")
 	}
 
-	server, err := api.NewServer(config, mongoClient)
+	pasetoMaker, err := token.NewPasetoMaker(config.TokenSymmetricKey)
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to create token maker")
+	}
+
+	server, err := api.NewServer(config, mongoClient, pasetoMaker)
 	if err != nil {
 		log.Fatal().Err(err).Msg("Failed to create server")
 	}
