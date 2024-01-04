@@ -1,20 +1,25 @@
 package data
 
-import "go.mongodb.org/mongo-driver/mongo"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type Session struct {
-	ID           string `bson:"_id"`
-	UserId       string `bson:"user_id"`
-	RefreshToken string `bson:"refresh_token"`
-	UserAgent    string `bson:"user_agent"`
-	ClientIP     string `bson:"client_ip"`
-	IsBlocked    bool   `bson:"is_blocked"`
-	ExpiresAt    int64  `bson:"expires_at"`
-	CreatedAt    int64  `bson:"created_at"`
+	ID           primitive.ObjectID `bson:"_id"`
+	Username     string             `bson:"username"`
+	RefreshToken string             `bson:"refresh_token"`
+	UserAgent    string             `bson:"user_agent"`
+	ClientIP     string             `bson:"client_ip"`
+	IsBlocked    bool               `bson:"is_blocked"`
+	ExpiresAt    time.Time          `bson:"expires_at"`
+	CreatedAt    time.Time          `bson:"created_at"`
 }
 
 type SessionRepository interface {
-	Create(session *Session) error
+	Create(session *Session) (string, error)
 	FindByID(id string) (*Session, error)
 }
 
@@ -28,10 +33,29 @@ func NewMongoDbSessionRepository(sessionCollection mongo.Collection) (SessionRep
 	}, nil
 }
 
-func (r *MongoDbSessionRepository) Create(session *Session) error {
-	return nil
+func (r *MongoDbSessionRepository) Create(session *Session) (string, error) {
+	ctx, cancel := createContext()
+	defer cancel()
+
+	session.ID = primitive.NewObjectID()
+
+	_, err := r.collection.InsertOne(ctx, session)
+	if err != nil {
+		return "", err
+	}
+
+	return session.ID.Hex(), nil
 }
 
 func (r *MongoDbSessionRepository) FindByID(id string) (*Session, error) {
-	return nil, nil
+	ctx, cancel := createContext()
+	defer cancel()
+
+	var session Session
+	err := r.collection.FindOne(ctx, &Session{ID: primitive.ObjectID{}}).Decode(&session)
+	if err != nil {
+		return nil, err
+	}
+
+	return &session, nil
 }

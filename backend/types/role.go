@@ -3,8 +3,8 @@ package types
 type Role string
 
 const (
-	Admin Role = "admin"
-	User  Role = "user"
+	AdminRole = "admin"
+	UserRole  = "user"
 )
 
 func (r Role) String() string {

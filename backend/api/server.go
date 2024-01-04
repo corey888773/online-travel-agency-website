@@ -3,6 +3,7 @@ package api
 import (
 	"github.com/corey888773/online-travel-agency-website/data"
 	"github.com/corey888773/online-travel-agency-website/token"
+	"github.com/corey888773/online-travel-agency-website/types"
 	"github.com/corey888773/online-travel-agency-website/util"
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -14,8 +15,9 @@ type Server struct {
 	mongoDb    *mongo.Client
 	tokenMaker token.TokenMaker
 
-	tripRepository data.TripRepository
-	userRepository data.UserRepository
+	tripRepository    data.TripRepository
+	userRepository    data.UserRepository
+	sessionRepository data.SessionRepository
 }
 
 func NewServer(config util.Config, mongoClient *mongo.Client, tokenMaker token.TokenMaker) (*Server, error) {
@@ -32,20 +34,27 @@ func NewServer(config util.Config, mongoClient *mongo.Client, tokenMaker token.T
 func (s *Server) SetupRouter() {
 	s.router = gin.Default()
 
-	// user routes
+	// login/register routes
 	s.router.POST("/register", s.registerUser)
 	s.router.POST("/login", s.loginUser)
 
+	// user maintanence routes
+	userRoutes := s.router.Group("/users").Use(authenticationMiddleware(s.tokenMaker))
+	userRoutes.GET("/", s.listUsers)
+	userRoutes.DELETE("/:id", s.deleteUser)
+	userRoutes.PATCH("/:id", s.updateUser)
+	userRoutes.PATCH("/password", s.updatePassword)
+
 	// trip routes
-	s.router.POST("/trips", s.addTrip)
-	s.router.GET("/trips/:id", s.getTrip)
-	s.router.GET("/trips", s.listTrips)
-	s.router.PATCH("/trips/:id", s.updateTrip)
-	s.router.DELETE("/trips/:id", s.deleteTrip)
+	tripRoutes := s.router.Group("/trips").Use(authenticationMiddleware(s.tokenMaker))
+	tripRoutes.GET("/", s.listTrips)
+	tripRoutes.GET("/:id", s.getTrip)
+	tripRoutes.Use(authorizationMiddleware(types.AdminRole)).POST("/", s.addTrip)
+	tripRoutes.Use(authorizationMiddleware(types.AdminRole)).PATCH("/:id", s.updateTrip).DELETE("/:id", s.deleteTrip)
 
 	// file server
-	s.router.Static("/public", "./public")
-	s.router.POST("/uploadImage", s.uploadImage)
+	s.router.Use(authenticationMiddleware(s.tokenMaker)).Static("/public", "./public")
+	s.router.Use(authenticationMiddleware(s.tokenMaker)).POST("/uploadImage", s.uploadImage)
 }
 
 func (s *Server) setupDb() error {
@@ -64,6 +73,14 @@ func (s *Server) setupDb() error {
 		return err
 	}
 	s.userRepository = userRepository
+
+	sessionCollecton := database.Collection("sessions")
+	sessionRepository, err := data.NewMongoDbSessionRepository(*sessionCollecton)
+	if err != nil {
+		return err
+	}
+	s.sessionRepository = sessionRepository
+
 	return nil
 }
 

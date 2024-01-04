@@ -100,7 +100,13 @@ func (s *Server) updateTrip(ctx *gin.Context) {
 
 	id := ctx.Param("id")
 
-	trip := data.Trip{
+	trip, err := s.tripRepository.FindByID(id)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	updatedTrip := data.Trip{
 		Name:        request.Name,
 		UnitPrice:   request.UnitPrice,
 		Destination: request.Destination,
@@ -113,7 +119,7 @@ func (s *Server) updateTrip(ctx *gin.Context) {
 		Available:   request.Available,
 	}
 
-	err := s.tripRepository.Update(id, &trip)
+	err = s.tripRepository.Update(trip.ID.Hex(), &updatedTrip)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

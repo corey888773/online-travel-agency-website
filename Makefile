@@ -4,9 +4,6 @@
 mongo:
 	docker run -d -p 27017:27017 --name mongo --network ota mongo:latest 
 
-start:
-	cd backend && go run main.go
-
 dstart:
 	docker run -p 8000:8000 --name ota  --network ota  ota:latest
 

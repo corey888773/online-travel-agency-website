@@ -101,11 +101,11 @@ func (r *MongoDbUserRepository) Add(user *User) (string, error) {
 	return user.ID.Hex(), nil
 }
 
-func (r *MongoDbUserRepository) Update(username string, user *User) error {
+func (r *MongoDbUserRepository) Update(username string, updatedUser *User) error {
 	ctx, cancel := createContext()
 	defer cancel()
 
-	_, err := r.collection.UpdateOne(ctx, primitive.M{"username": username}, primitive.M{"$set": user})
+	_, err := r.collection.UpdateOne(ctx, primitive.M{"_id": updatedUser.ID}, primitive.M{"$set": updatedUser})
 	if err != nil {
 		return fmt.Errorf("failed to update user: %w", err)
 	}

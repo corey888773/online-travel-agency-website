@@ -114,7 +114,13 @@ func (r *MongoDbTripRepository) Update(id string, updatedTrip *Trip) error {
 	ctx, cancel := createContext()
 	defer cancel()
 
-	_, err := r.collection.UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": updatedTrip})
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return fmt.Errorf("failed to convert id: %w", err)
+	}
+
+	_, err = r.collection.UpdateOne(ctx, bson.M{"_id": objectID}, bson.M{"$set": updatedTrip})
+
 	if err != nil {
 		return fmt.Errorf("failed to update trip: %w", err)
 	}
