@@ -34,6 +34,8 @@ func NewServer(config util.Config, mongoClient *mongo.Client, tokenMaker token.T
 func (s *Server) SetupRouter() {
 	s.router = gin.Default()
 
+	s.router.Use(CORSMiddleware())
+
 	// login/register routes
 	s.router.POST("/register", s.registerUser)
 	s.router.POST("/login", s.loginUser)
@@ -41,6 +43,7 @@ func (s *Server) SetupRouter() {
 	// user maintanence routes
 	userRoutes := s.router.Group("/users").Use(authenticationMiddleware(s.tokenMaker))
 	userRoutes.GET("/", s.listUsers)
+	userRoutes.GET("/me", s.getCurrentUser)
 	userRoutes.DELETE("/:id", s.deleteUser)
 	userRoutes.PATCH("/:id", s.updateUser)
 	userRoutes.PATCH("/password", s.updatePassword)

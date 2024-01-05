@@ -299,3 +299,21 @@ func (s *Server) updatePassword(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, newUserResponse(user))
 }
+
+func (s *Server) getCurrentUser(ctx *gin.Context) {
+	authPayload, ok := ctx.Get(authorizationPayloadKey)
+	if !ok {
+		err := errorResponse(errors.New("authorization payload not found"))
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	pl := authPayload.(*token.Payload)
+	user, err := s.userRepository.FindByUsername(pl.Username)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	ctx.JSON(http.StatusOK, newUserResponse(user))
+}
