@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Trip } from '../trip';
+import { Trip } from '../interfaces/trip';
 import { ApiService } from '../api.service';
 
 @Component({

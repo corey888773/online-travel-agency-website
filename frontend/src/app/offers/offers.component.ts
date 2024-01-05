@@ -2,12 +2,12 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TripComponent } from '../trip/trip.component';
 import { TripFormComponent } from '../trip-form/trip-form.component';
-import { Trip } from '../trip';
+import { Trip } from '../interfaces/trip';
 import { OnInit } from '@angular/core';
 import { ApiService } from '../api.service';
 import { FormsModule } from '@angular/forms';
 import { OffersFilterComponent } from '../offers-filter/offers-filter.component';
-import { Basket } from '../basket';
+import { Basket } from '../interfaces/basket';
 import { BasketWidgetComponent } from '../basket-widget/basket-widget.component';
 
 @Component({

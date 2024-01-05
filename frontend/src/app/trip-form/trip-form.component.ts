@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule } from '@angular/forms';
 import { ApiService } from '../api.service';
-import { Trip } from '../trip';
+import { Trip } from '../interfaces/trip';
 
 @Component({
   selector: 'app-trip-form',

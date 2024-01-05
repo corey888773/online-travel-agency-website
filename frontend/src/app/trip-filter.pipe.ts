@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Trip } from './trip';
+import { Trip } from './interfaces/trip';
 
 @Pipe({
   name: 'tripFilter',

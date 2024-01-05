@@ -1,6 +1,6 @@
 import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Trip } from '../trip';
+import { Trip } from '../interfaces/trip';
 import { TripFilterPipe } from '../trip-filter.pipe';
 import { FormsModule } from '@angular/forms';
 

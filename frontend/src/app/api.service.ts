@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Trip } from './trip';
+import { Trip } from './interfaces/trip';
 import { Observable, map, tap } from 'rxjs';
-import * as fs from 'fs';
-import { Basket } from './basket';
+import { Basket } from './interfaces/basket';
 
 @Injectable({
   providedIn: 'root'

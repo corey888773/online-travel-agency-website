@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Basket } from '../basket';
+import { Basket } from '../interfaces/basket';
 import { ApiService } from '../api.service';
 
 @Component({
