@@ -13,6 +13,7 @@ type addOrUpdateTripRequest struct {
 	Name        string         `json:"name" binding:"required"`
 	UnitPrice   string         `json:"price" binding:"required"`
 	Destination string         `json:"destination" binding:"required"`
+	Description string         `json:"description" binding:"required"`
 	StartDate   time.Time      `json:"startDate" binding:"required"`
 	EndDate     time.Time      `json:"endDate" binding:"required"`
 	ImgUrl      string         `json:"imgUrl" binding:"required"`
@@ -110,6 +111,7 @@ func (s *Server) updateTrip(ctx *gin.Context) {
 		Name:        request.Name,
 		UnitPrice:   request.UnitPrice,
 		Destination: request.Destination,
+		Description: request.Description,
 		StartDate:   request.StartDate,
 		EndDate:     request.EndDate,
 		ImgUrl:      request.ImgUrl,

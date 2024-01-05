@@ -16,6 +16,7 @@ type Trip struct {
 	Name        string             `bson:"name"`
 	UnitPrice   string             `bson:"price"`
 	Destination string             `bson:"destination"`
+	Description string             `bson:"description"`
 	StartDate   time.Time          `bson:"startDate"`
 	EndDate     time.Time          `bson:"endDate"`
 	ImgUrl      string             `bson:"imgUrl"`
