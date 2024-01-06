@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Trip } from './interfaces/trip';
+import { Trip } from './trips/trip';
 
 @Pipe({
   name: 'tripFilter',
@@ -29,7 +29,7 @@ export class TripFilterPipe implements PipeTransform {
       if (!filterByPriceMin) filterByPriceMin = 0;
       if (!filterByPriceMax) filterByPriceMax = Infinity;
 
-      filteredTrips = filteredTrips.filter(trip => trip.unitPrice >= filterByPriceMin && trip.unitPrice <= filterByPriceMax);
+      filteredTrips = filteredTrips.filter(trip => trip.price >= filterByPriceMin && trip.price <= filterByPriceMax);
     }
 
     // if (filterByRatings){
@@ -58,7 +58,7 @@ export class TripFilterPipe implements PipeTransform {
 
     switch (sortBy) {
       case 'price':
-        filteredTrips = filteredTrips.sort((a, b) => a.unitPrice - b.unitPrice);
+        filteredTrips = filteredTrips.sort((a, b) => a.price - b.price);
         break;
       case 'rating':
         filteredTrips = filteredTrips.sort((a, b) => b.averageRating - a.averageRating);

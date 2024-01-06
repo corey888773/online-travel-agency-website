@@ -1,15 +1,16 @@
 export interface Trip {
-    uuid: string;
+    id: string;
     name: string;
     destination: string;
     startDate: Date;
     endDate: Date;
     description: string;
-    unitPrice: number;
+    price: number;
     currency: string;
-    maxSlots: number;
-    reservedSlots: number;
-    image: string;
+    maxGuests: number;
+    available: number;
+    imgUrl: string;
+    imgAlt: string;
     reserved: boolean;
     averageRating: number;
     ratings: number[];

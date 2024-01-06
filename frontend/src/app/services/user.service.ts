@@ -1,5 +1,5 @@
 import { Injectable, signal } from '@angular/core';
-import { User } from '../interfaces/user';
+import { User } from '../users/user';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
@@ -22,22 +22,13 @@ export class UserService {
 
     return this.httpClient.post(loginUrl, user).pipe(
       map((response: any) => {
-        const user: User = {
-          id: response.user.id,
-          username: response.user.username,
-          email: response.user.email,
-          fullName: response.user.full_name,
-          role: response.user.role,
-          paswordChangedAt: response.user.password_changed_at,
-          createdAt: response.user.created_at,
-          updatedAt: response.user.updated_at,
-        };
+        const user: User = response.user;
         const session: Session = {
-          accessToken: response.access_token,
-          accessTokenExpiresAt: response.access_token_expires_at,
-          refreshToken: response.refresh_token,
-          refreshTokenExpiresAt: response.refresh_token_expires_at,
-          sessionID: response.session_id,
+          accessToken: response.accessToken,
+          accessTokenExpiresAt: response.accessTokenExpiresAt,
+          refreshToken: response.refreshToken,
+          refreshTokenExpiresAt: response.refreshTokenExpiresAt,
+          sessionID: response.sessionID,
         };
         return {
           session,
@@ -52,16 +43,7 @@ export class UserService {
 
     return this.httpClient.post(registerUrl, user).pipe(
       map((response: any) => {
-        const user: User = {
-          id: response.id,
-          username: response.username,
-          email: response.email,
-          fullName: response.full_name,
-          role: response.role,
-          paswordChangedAt: response.password_changed_at,
-          createdAt: response.created_at,
-          updatedAt: response.updated_at,
-        };
+        const user: User = response
         return user;
       }));
   } 
@@ -71,16 +53,7 @@ export class UserService {
     
     return this.httpClient.get(getUserUrl).pipe(
       map((response: any) => {
-        const user: User = {
-          id: response.id,
-          username: response.username,
-          email: response.email,
-          fullName: response.full_name,
-          role: response.role,
-          paswordChangedAt: response.password_changed_at,
-          createdAt: response.created_at,
-          updatedAt: response.updated_at,
-        };
+        const user: User = response
         return user;
       }));
   }

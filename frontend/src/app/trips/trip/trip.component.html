@@ -3,20 +3,21 @@
         [ngStyle]="{'border-color':borderColour}">
     <h1 class="text-center"> {{trip.name}}</h1>
     <picture>
-        <img class="photo" [src]="trip.image" alt="trip photo">
+        <img class="photo" [src]="getImageUrl()" alt="trip photo">
     </picture>
     <div id="description">
+        <p>{{trip.destination}}</p>
         <p>{{trip.description}}</p>
         <p>Start date: {{trip.startDate}}</p>
         <p>End date: {{trip.endDate}}</p>
-        <p>Available slots: {{trip.maxSlots - trip.reservedSlots}}</p>
+        <p>Available slots: {{trip.available}}</p>
     </div>
 
     <div id="price">
         <select class="form-control"(change)="calculatePrice($event)">
             <option *ngFor="let key of currenciesMap | keyvalue" [value]="key.key">{{key.key}}</option>
         </select>
-        <p>Price: {{ adjustedPrice ?? trip.unitPrice }}</p>
+        <p>Price: {{ adjustedPrice ?? trip.price }}</p>
     </div>
 
     <div id="reservation-buttons">

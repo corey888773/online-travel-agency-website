@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
-import { Basket } from '../interfaces/basket';
-import { ApiService } from '../api.service';
+import { Basket } from '../../interfaces/basket';
+import { ApiService } from '../../api.service';
 
 @Component({
   selector: 'app-basket-widget',

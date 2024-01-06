@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Trip } from './interfaces/trip';
+import { Trip } from './trips/trip';
 
 @Pipe({
   name: 'tripFilter'
@@ -31,7 +31,7 @@ export class TripFilterPipe implements PipeTransform {
     // Filter by price
     if (filterByPrice) {
       filteredTrips = filteredTrips.filter(trip => {
-        return trip.unitPrice <= filterByPrice;
+        return trip.price <= filterByPrice;
       });
     }
 
@@ -71,7 +71,7 @@ export class TripFilterPipe implements PipeTransform {
     if (sortBy) {
       filteredTrips = filteredTrips.sort((a, b) => {
         if (sortBy === 'price') {
-          return a.unitPrice - b.unitPrice;
+          return a.price - b.price;
         } else if (sortBy === 'name') {
           return a.name.localeCompare(b.name);
         } else if (sortBy === 'ratings') {

@@ -1,7 +1,7 @@
 import { Component, inject, OnInit, Inject, PLATFORM_ID} from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { HomeComponent } from './home/home.component';
-import { OffersComponent } from './offers/offers.component';
+import { OffersComponent } from './trips/trips-page/offers.component';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { UserService } from './services/user.service';
 

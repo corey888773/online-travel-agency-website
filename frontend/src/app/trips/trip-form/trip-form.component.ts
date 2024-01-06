@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, ReactiveFormsModule } from '@angular/forms';
-import { ApiService } from '../api.service';
-import { Trip } from '../interfaces/trip';
+import { ApiService } from '../../api.service';
+import { Trip } from '../trip';
 
 @Component({
   selector: 'app-trip-form',
@@ -25,7 +25,7 @@ export class TripFormComponent implements OnInit {
       startDate: ['', Validators.required],
       endDate: ['', Validators.required],
       description: ['', Validators.required],
-      unitPrice: ['', Validators.required],
+      price: ['', Validators.required],
       currency: ['', Validators.required],
       maxSlots: ['', Validators.required],
       image: ['', Validators.required],
@@ -35,18 +35,19 @@ export class TripFormComponent implements OnInit {
   onSubmit() {
   //  create trip object from form fields
     let trip : Trip = {
-      uuid: '',
+      id: '',
       name: this.tripForm.value.name,
       destination: this.tripForm.value.destination,
       startDate: this.tripForm.value.startDate,
       endDate: this.tripForm.value.endDate,
       description: this.tripForm.value.description,
-      unitPrice: this.tripForm.value.unitPrice,
+      price: this.tripForm.value.price,
       currency: this.tripForm.value.currency,
-      maxSlots: this.tripForm.value.maxSlots,
-      image: this.tripForm.value.image.name,
+      maxGuests: this.tripForm.value.maxSlots,
+      imgUrl: this.tripForm.value.image.name,
+      imgAlt: this.tripForm.value.image.name,
       reserved: false,
-      reservedSlots: 0,
+      available: 0,
       averageRating: 0,
       ratings: [],
     };

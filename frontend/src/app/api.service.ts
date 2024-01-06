@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Trip } from './interfaces/trip';
+import { Trip } from './trips/trip';
 import { Observable, map, tap } from 'rxjs';
 import { Basket } from './interfaces/basket';
 
@@ -20,17 +20,17 @@ export class ApiService {
 
   public reserveTrip(trip: Trip, quantity: number) {
     this.basket.reservations.push({
-      tripUuid: trip.uuid,
+      tripUuid: trip.id,
       quantity: quantity
     });
-    this.basket.totalPrice += trip.unitPrice * quantity;
+    this.basket.totalPrice += trip.price * quantity;
   }
 
   public cancelReservation(trip: Trip) {
-    const reservation = this.basket.reservations.find(r => r.tripUuid === trip.uuid);
+    const reservation = this.basket.reservations.find(r => r.tripUuid === trip.id);
     if (reservation) {
-      this.basket.reservations = this.basket.reservations.filter(r => r.tripUuid !== trip.uuid);
-      this.basket.totalPrice -= trip.unitPrice * reservation.quantity;
+      this.basket.reservations = this.basket.reservations.filter(r => r.tripUuid !== trip.id);
+      this.basket.totalPrice -= trip.price * reservation.quantity;
     }
   }
 

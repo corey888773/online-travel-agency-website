@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Trip } from '../interfaces/trip';
-import { ApiService } from '../api.service';
+import { Trip } from '../trip';
+import { ApiService } from '../../api.service';
 
 @Component({
   selector: 'app-trip',
@@ -38,15 +38,15 @@ export class TripComponent {
   }
 
   isAlmostFull(treshold: number = 3): boolean {
-    return this.trip.reservedSlots >= this.trip.maxSlots - treshold
+    return this.trip.maxGuests - this.trip.available >= this.trip.maxGuests - treshold
   }
 
   isFull(): boolean {
-    return this.trip.reservedSlots === this.trip.maxSlots
+    return this.trip.maxGuests - this.trip.available === this.trip.maxGuests
   }  
 
   reserve(): void {
-    this.trip.reservedSlots++;
+    this.trip.available--;
     this.trip.reserved = true;
 
     if (this.isFull()) {
@@ -63,14 +63,14 @@ export class TripComponent {
   }
 
   cancel(): void {
-    this.trip.reservedSlots--;
+    this.trip.available++;
     this.trip.reserved = false;
     this.apiService.cancelReservation(this.trip)
     alert("You have successfully canceled your reservation!")
   }
 
   calculatePrice(event : Event): void {
-    this.adjustedPrice = this.trip.unitPrice * this.currenciesMap[(event.target as HTMLInputElement).value];
+    this.adjustedPrice = this.trip.price * this.currenciesMap[(event.target as HTMLInputElement).value];
   }
 
   rate(): void {
@@ -82,6 +82,11 @@ export class TripComponent {
     } else {
       alert("Please enter a valid rating!")
     }
+  }
+
+  getImageUrl(): string {
+    const baseUrl = 'http://localhost:8000';
+    return `${baseUrl}/${this.trip.imgUrl}`;
   }
 }
 

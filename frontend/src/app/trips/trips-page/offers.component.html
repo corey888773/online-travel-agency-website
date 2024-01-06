@@ -2,15 +2,15 @@
 <app-basket-widget></app-basket-widget>
 <section id="stats" class="container d-flex flex-row justify-content-around align-items-center">
     <div id="counter">
-        <p>Number of offers: {{filteredTrips.length}}</p>
+        <p>Number of offers: {{trips.length}}</p>
         <p>Number of reserved offers: {{countReservedTrips()}}</p>
     </div>
 </section>
 
 <section id="filters">
-    <app-offers-filter [trips]="trips" (filteredTrips)="filterTrips($event)"></app-offers-filter>
+    <app-offers-filter [trips]="trips" (filterParams)="filterTrips($event)"></app-offers-filter>
 </section>
-<app-trip *ngFor="let trip of filteredTrips" 
+<app-trip *ngFor="let trip of trips" 
 [trip]="trip" 
 [borderColour]="calculateTripColour(trip)"
 (removeTrip)="removeTrip($event)"></app-trip>
