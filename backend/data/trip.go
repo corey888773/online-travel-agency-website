@@ -12,22 +12,24 @@ import (
 )
 
 type Trip struct {
-	ID          primitive.ObjectID `bson:"_id,omitempty"`
-	Name        string             `bson:"name"`
-	UnitPrice   string             `bson:"price"`
-	Destination string             `bson:"destination"`
-	Description string             `bson:"description"`
-	StartDate   time.Time          `bson:"startDate"`
-	EndDate     time.Time          `bson:"endDate"`
-	ImgUrl      string             `bson:"imgUrl"`
-	ImgAlt      string             `bson:"imgAlt"`
-	Currency    types.Currency     `bson:"currency"`
-	MaxGuests   int64              `bson:"maxGuests"`
-	Available   int64              `bson:"available"`
+	ID            primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Name          string             `bson:"name" json:"name"`
+	UnitPrice     int64              `bson:"price" json:"price"`
+	Destination   string             `bson:"destination" json:"destination"`
+	Description   string             `bson:"description" json:"description"`
+	StartDate     time.Time          `bson:"startDate" json:"startDate"`
+	EndDate       time.Time          `bson:"endDate" json:"endDate"`
+	ImgUrl        string             `bson:"imgUrl" json:"imgUrl"`
+	ImgAlt        string             `bson:"imgAlt" json:"imgAlt"`
+	Currency      types.Currency     `bson:"currency" json:"currency"`
+	MaxGuests     int64              `bson:"maxGuests" json:"maxGuests"`
+	Available     int64              `bson:"available" json:"available"`
+	Ratings       []int64            `bson:"ratings" json:"ratings"`
+	AverageRating float64            `bson:"averageRating" json:"averageRating"`
 }
 
 type TripRepository interface {
-	FindAll() ([]Trip, error)
+	FindAll(params FindTripsParams) ([]Trip, error)
 	FindByID(id string) (*Trip, error)
 	Add(trip *Trip) (string, error)
 	Update(id string, trip *Trip) error
@@ -55,18 +57,110 @@ func NewMongoDbTripRepository(tripCollection mongo.Collection) (TripRepository, 
 	}, nil
 }
 
-func (r *MongoDbTripRepository) FindAll() ([]Trip, error) {
+type FindTripsParams struct {
+	MinPrice    int64
+	MaxPrice    int64
+	SearchTerm  string
+	Ratings     string
+	Destination string
+	MinDate     time.Time
+	MaxDate     time.Time
+	SortBy      string
+}
+
+func (r *MongoDbTripRepository) FindAll(params FindTripsParams) ([]Trip, error) {
 	ctx, cancel := createContext()
 	defer cancel()
 
+	filter := bson.M{}
+
+	if params.MinPrice > 0 {
+		filter["price"] = bson.M{
+			"$gte": params.MinPrice,
+		}
+	}
+	if params.MaxPrice > 0 && params.MaxPrice >= params.MinPrice {
+		filter["price"] = bson.M{
+			"$lte": params.MaxPrice,
+		}
+	}
+
+	if params.Destination != "" {
+		filter["destination"] = bson.M{
+			"$regex":   params.Destination,
+			"$options": "i",
+		}
+	}
+
+	if params.SearchTerm != "" {
+		filter["name"] = bson.M{
+			"$regex":   params.SearchTerm,
+			"$options": "i",
+		}
+	}
+
+	if !params.MinDate.IsZero() {
+		filter["startDate"] = bson.M{
+			"$gte": params.MinDate,
+		}
+		filter["endDate"] = bson.M{
+			"$gte": params.MinDate,
+		}
+	}
+
+	if !params.MaxDate.IsZero() && params.MaxDate.After(params.MinDate) {
+		filter["startDate"] = bson.M{
+			"$lte": params.MaxDate,
+		}
+		filter["endDate"] = bson.M{
+			"$lte": params.MaxDate,
+		}
+	}
+
+	// if len(params.Ratings) > 0 {
+	// 	ratings := strings.Split(params.Ratings, ",")
+	// 	for _, rating := range ratings {
+	// 		ratingInt, err := strconv.Atoi(rating)
+	// 		if err != nil {
+	// 			return nil, fmt.Errorf("failed to convert rating: %w", err)
+	// 		}
+	// 		matchStage = append(matchStage, bson.E{
+	// 			Key: "$match",
+	// 			Value: bson.M{
+	// 				"ratings": bson.M{
+	// 					"$gte": ratingInt,
+	// 					"$lt":  ratingInt + 1,
+	// 				},
+	// 			},
+	// 		})
+	// 	}
+	// }
+
+	sortOptions := options.Find()
+	var sortRule bson.M
+	if params.SortBy != "" {
+		sortOrder := 1
+
+		if params.SortBy[0] == '-' {
+			params.SortBy = params.SortBy[1:]
+			sortOrder = -1
+		}
+
+		sortRule = bson.M{
+			params.SortBy: sortOrder,
+		}
+	}
+
+	sortOptions.SetSort(sortRule)
+
 	trips := []Trip{}
-	cursor, err := r.collection.Find(ctx, bson.M{})
+	cursor, err := r.collection.Find(ctx, filter, sortOptions)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to find trips: %w", err)
 	}
 
 	if err = cursor.All(ctx, &trips); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to decode trips: %w", err)
 	}
 
 	return trips, nil

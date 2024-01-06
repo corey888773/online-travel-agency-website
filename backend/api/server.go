@@ -56,7 +56,7 @@ func (s *Server) SetupRouter() {
 	tripRoutes.Use(authorizationMiddleware(types.AdminRole)).PATCH("/:id", s.updateTrip).DELETE("/:id", s.deleteTrip)
 
 	// file server
-	s.router.Use(authenticationMiddleware(s.tokenMaker)).Static("/public", "./public")
+	s.router.Static("/public", "./public")
 	s.router.Use(authenticationMiddleware(s.tokenMaker)).POST("/uploadImage", s.uploadImage)
 }
 

@@ -8,14 +8,14 @@ import (
 )
 
 type Session struct {
-	ID           primitive.ObjectID `bson:"_id"`
-	Username     string             `bson:"username"`
-	RefreshToken string             `bson:"refresh_token"`
-	UserAgent    string             `bson:"user_agent"`
-	ClientIP     string             `bson:"client_ip"`
-	IsBlocked    bool               `bson:"is_blocked"`
-	ExpiresAt    time.Time          `bson:"expires_at"`
-	CreatedAt    time.Time          `bson:"created_at"`
+	ID           primitive.ObjectID `bson:"_id" json:"id"`
+	Username     string             `bson:"username" json:"username"`
+	RefreshToken string             `bson:"refreshToken" json:"refreshToken"`
+	UserAgent    string             `bson:"userAgent" json:"userAgent"`
+	ClientIP     string             `bson:"clientIp" json:"clientIP"`
+	IsBlocked    bool               `bson:"isBlocked" json:"isBlocked"`
+	ExpiresAt    time.Time          `bson:"expiresAt" json:"expiresAt"`
+	CreatedAt    time.Time          `bson:"createdAt" json:"createdAt"`
 }
 
 type SessionRepository interface {

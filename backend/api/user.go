@@ -22,12 +22,12 @@ type registerUserRequest struct {
 type userResponse struct {
 	ID                string    `json:"id"`
 	Username          string    `json:"username"`
-	FullName          string    `json:"full_name"`
+	FullName          string    `json:"fullName"`
 	Email             string    `json:"email"`
 	Role              string    `json:"role"`
-	PasswordChangedAt time.Time `json:"password_changed_at"`
-	UpdatedAt         time.Time `json:"updated_at"`
-	CreatedAt         time.Time `json:"created_at"`
+	PasswordChangedAt time.Time `json:"passwordChangedAt"`
+	UpdatedAt         time.Time `json:"updatedAt"`
+	CreatedAt         time.Time `json:"createdAt"`
 }
 
 func newUserResponse(user *data.User) userResponse {
@@ -88,11 +88,11 @@ type loginUserRequest struct {
 
 type loginUserResponse struct {
 	User                  userResponse `json:"user"`
-	SessionID             string       `json:"session_id"`
-	AccessToken           string       `json:"access_token"`
-	AccessTokenExpiresAt  time.Time    `json:"access_token_expires_at"`
-	RefreshToken          string       `json:"refresh_token"`
-	RefreshTokenExpiresAt time.Time    `json:"refresh_token_expires_at"`
+	SessionID             string       `json:"sessionID"`
+	AccessToken           string       `json:"accessToken"`
+	AccessTokenExpiresAt  time.Time    `json:"accessTokenExpiresAt"`
+	RefreshToken          string       `json:"refreshToken"`
+	RefreshTokenExpiresAt time.Time    `json:"refreshTokenExpiresAt"`
 }
 
 func (s *Server) loginUser(ctx *gin.Context) {
@@ -246,7 +246,7 @@ func (s *Server) listUsers(ctx *gin.Context) {
 type updatePasswordRequest struct {
 	Username    string `json:"username"`
 	Password    string `json:"password"`
-	NewPassword string `json:"new_password"`
+	NewPassword string `json:"newPassword"`
 }
 
 func (s *Server) updatePassword(ctx *gin.Context) {

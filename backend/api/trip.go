@@ -11,7 +11,7 @@ import (
 
 type addOrUpdateTripRequest struct {
 	Name        string         `json:"name" binding:"required"`
-	UnitPrice   string         `json:"price" binding:"required"`
+	UnitPrice   int64          `json:"price" binding:"required"`
 	Destination string         `json:"destination" binding:"required"`
 	Description string         `json:"description" binding:"required"`
 	StartDate   time.Time      `json:"startDate" binding:"required"`
@@ -35,16 +35,18 @@ func (s *Server) addTrip(ctx *gin.Context) {
 	}
 
 	trip := data.Trip{
-		Name:        request.Name,
-		UnitPrice:   request.UnitPrice,
-		Destination: request.Destination,
-		StartDate:   request.StartDate,
-		EndDate:     request.EndDate,
-		ImgUrl:      request.ImgUrl,
-		ImgAlt:      request.ImgAlt,
-		Currency:    request.Currency,
-		MaxGuests:   request.MaxGuests,
-		Available:   request.Available,
+		Name:          request.Name,
+		UnitPrice:     request.UnitPrice,
+		Destination:   request.Destination,
+		StartDate:     request.StartDate,
+		EndDate:       request.EndDate,
+		ImgUrl:        request.ImgUrl,
+		ImgAlt:        request.ImgAlt,
+		Currency:      request.Currency,
+		MaxGuests:     request.MaxGuests,
+		Available:     request.Available,
+		Ratings:       []int64{},
+		AverageRating: 0,
 	}
 
 	objectID, err := s.tripRepository.Add(&trip)
@@ -81,7 +83,19 @@ type listTripsResponse struct {
 }
 
 func (s *Server) listTrips(ctx *gin.Context) {
-	trips, err := s.tripRepository.FindAll()
+	queryParams := ctx.Request.URL.Query()
+
+	var params data.FindTripsParams
+	if len(queryParams) > 0 {
+
+		if err := ctx.ShouldBindQuery(&params); err != nil {
+			ctx.JSON(http.StatusBadRequest, errorResponse(err))
+			return
+		}
+	}
+	// fmt.Printf(params.Destination, params.MaxPrice, params.MinPrice, params.SearchTerm, params.Ratings, params.MinDate, params.MaxDate)
+
+	trips, err := s.tripRepository.FindAll(params)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -108,17 +122,19 @@ func (s *Server) updateTrip(ctx *gin.Context) {
 	}
 
 	updatedTrip := data.Trip{
-		Name:        request.Name,
-		UnitPrice:   request.UnitPrice,
-		Destination: request.Destination,
-		Description: request.Description,
-		StartDate:   request.StartDate,
-		EndDate:     request.EndDate,
-		ImgUrl:      request.ImgUrl,
-		ImgAlt:      request.ImgAlt,
-		Currency:    request.Currency,
-		MaxGuests:   request.MaxGuests,
-		Available:   request.Available,
+		Name:          request.Name,
+		UnitPrice:     request.UnitPrice,
+		Destination:   request.Destination,
+		Description:   request.Description,
+		StartDate:     request.StartDate,
+		EndDate:       request.EndDate,
+		ImgUrl:        request.ImgUrl,
+		ImgAlt:        request.ImgAlt,
+		Currency:      request.Currency,
+		MaxGuests:     request.MaxGuests,
+		Available:     request.Available,
+		Ratings:       trip.Ratings,
+		AverageRating: trip.AverageRating,
 	}
 
 	err = s.tripRepository.Update(trip.ID.Hex(), &updatedTrip)

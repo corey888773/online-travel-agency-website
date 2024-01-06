@@ -12,16 +12,16 @@ import (
 )
 
 type User struct {
-	ID                primitive.ObjectID `bson:"_id,omitempty"`
-	Username          string             `bson:"username"`
-	HashedPassword    string             `bson:"password"`
-	Email             string             `bson:"email" unique:"true"`
-	IsEmailVerified   bool               `bson:"isEmailVerified"`
-	FullName          string             `bson:"firstName"`
-	Role              types.Role         `bson:"role"`
-	CreatedAt         time.Time          `bson:"createdAt"`
-	UpdatedAt         time.Time          `bson:"updatedAt"`
-	PasswordChangedAt time.Time          `bson:"passwordChangedAt"`
+	ID                primitive.ObjectID `bson:"_id,omitempty" json:"id"`
+	Username          string             `bson:"username" json:"username"`
+	HashedPassword    string             `bson:"password" json:"password"`
+	Email             string             `bson:"email" json:"email"`
+	IsEmailVerified   bool               `bson:"isEmailVerified" json:"isEmailVerified"`
+	FullName          string             `bson:"firstName" json:"firstName"`
+	Role              types.Role         `bson:"role" json:"role"`
+	CreatedAt         time.Time          `bson:"createdAt" json:"createdAt"`
+	UpdatedAt         time.Time          `bson:"updatedAt" json:"updatedAt"`
+	PasswordChangedAt time.Time          `bson:"passwordChangedAt" json:"passwordChangedAt"`
 }
 
 type UserRepository interface {
