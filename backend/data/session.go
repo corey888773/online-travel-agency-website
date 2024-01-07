@@ -1,6 +1,7 @@
 package data
 
 import (
+	"fmt"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -51,10 +52,15 @@ func (r *MongoDbSessionRepository) FindByID(id string) (*Session, error) {
 	ctx, cancel := createContext()
 	defer cancel()
 
-	var session Session
-	err := r.collection.FindOne(ctx, &Session{ID: primitive.ObjectID{}}).Decode(&session)
+	objectID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to convert id: %w", err)
+	}
+
+	var session Session
+	err = r.collection.FindOne(ctx, primitive.M{"_id": objectID}).Decode(&session)
+	if err != nil {
+		return nil, fmt.Errorf("failed to find session: %w", err)
 	}
 
 	return &session, nil

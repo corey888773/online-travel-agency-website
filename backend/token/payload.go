@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/corey888773/online-travel-agency-website/data"
 	"github.com/google/uuid"
 )
 
@@ -23,7 +22,7 @@ type Payload struct {
 	ExpiredAt time.Time `json:"expired_at"`
 }
 
-func NewPayload(user *data.User, duration time.Duration) (*Payload, error) {
+func NewPayload(userId string, username string, role string, duration time.Duration) (*Payload, error) {
 	id, err := uuid.NewRandom()
 	if err != nil {
 		return nil, fmt.Errorf("failed to generate token id: %w", err)
@@ -31,9 +30,9 @@ func NewPayload(user *data.User, duration time.Duration) (*Payload, error) {
 
 	return &Payload{
 		ID:        id,
-		UserId:    user.ID.Hex(),
-		Username:  user.Username,
-		Role:      user.Role.String(),
+		UserId:    userId,
+		Username:  username,
+		Role:      role,
 		IssuedAt:  time.Now(),
 		ExpiredAt: time.Now().Add(duration),
 	}, nil

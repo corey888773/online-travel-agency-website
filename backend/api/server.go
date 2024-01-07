@@ -36,9 +36,10 @@ func (s *Server) SetupRouter() {
 
 	s.router.Use(CORSMiddleware())
 
-	// login/register routes
+	// auth routes
 	s.router.POST("/register", s.registerUser)
 	s.router.POST("/login", s.loginUser)
+	s.router.POST("/renewAccess", s.renewAccessToken)
 
 	// user maintanence routes
 	userRoutes := s.router.Group("/users").Use(authenticationMiddleware(s.tokenMaker))

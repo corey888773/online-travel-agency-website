@@ -2,6 +2,7 @@ package api
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -114,13 +115,13 @@ func (s *Server) loginUser(ctx *gin.Context) {
 		return
 	}
 
-	accessToken, accessTokenPayload, err := s.tokenMaker.CreateToken(user, s.config.AccessTokenDuration)
+	accessToken, accessTokenPayload, err := s.tokenMaker.CreateToken(user.ID.Hex(), user.Username, user.Role.String(), s.config.AccessTokenDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	refreshToken, refreshTokenPayload, err := s.tokenMaker.CreateToken(user, s.config.RefreshTokenDuration)
+	refreshToken, refreshTokenPayload, err := s.tokenMaker.CreateToken(user.ID.Hex(), user.Username, user.Role.String(), s.config.RefreshTokenDuration)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
@@ -316,4 +317,71 @@ func (s *Server) getCurrentUser(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, newUserResponse(user))
+}
+
+type renewAccessTokenRequest struct {
+	SessionID    string `json:"sessionID"`
+	RefreshToken string `json:"refreshToken"`
+}
+
+type renewAccessTokenResponse struct {
+	AccessToken          string    `json:"accessToken"`
+	AccessTokenExpiresAt time.Time `json:"accessTokenExpiresAt"`
+}
+
+func (s *Server) renewAccessToken(ctx *gin.Context) {
+	var request renewAccessTokenRequest
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		return
+	}
+
+	payload, err := s.tokenMaker.VerifyToken(request.RefreshToken)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, errorResponse(err))
+		return
+	}
+
+	session, err := s.sessionRepository.FindByID(request.SessionID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	if session.IsBlocked {
+		err := errorResponse(errors.New("session is blocked"))
+		ctx.JSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	if session.Username != payload.Username {
+		err := errorResponse(errors.New("incorrect session user"))
+		ctx.JSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	if session.RefreshToken != request.RefreshToken {
+		err := errorResponse(errors.New("incorrect session refresh token"))
+		ctx.JSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	if time.Now().After(session.ExpiresAt) {
+		err := errorResponse(errors.New("session expired"))
+		ctx.JSON(http.StatusUnauthorized, err)
+		return
+	}
+
+	accessToken, accessTokenPayload, err := s.tokenMaker.CreateToken(payload.UserId, payload.Username, payload.Role, s.config.AccessTokenDuration)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	fmt.Println(accessTokenPayload)
+
+	ctx.JSON(http.StatusOK, renewAccessTokenResponse{
+		AccessToken:          accessToken,
+		AccessTokenExpiresAt: accessTokenPayload.ExpiredAt,
+	})
 }
