@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { BasketWidgetComponent } from './basket-widget.component';
+import { AddTripFormComponent } from './add-trip-form.component';
 
-describe('BasketWidgetComponent', () => {
-  let component: BasketWidgetComponent;
-  let fixture: ComponentFixture<BasketWidgetComponent>;
+describe('AddTripFormComponent', () => {
+  let component: AddTripFormComponent;
+  let fixture: ComponentFixture<AddTripFormComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BasketWidgetComponent]
+      imports: [AddTripFormComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(BasketWidgetComponent);
+    fixture = TestBed.createComponent(AddTripFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

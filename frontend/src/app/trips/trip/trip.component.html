@@ -14,25 +14,16 @@
     </div>
 
     <div id="price">
-        <select class="form-control"(change)="calculatePrice($event)">
+        <select class="form-select" (change)="calculatePrice($event)">
             <option *ngFor="let key of currenciesMap | keyvalue" [value]="key.key">{{key.key}}</option>
         </select>
-        <p>Price: {{ adjustedPrice ?? trip.price }}</p>
+        <p>Price: {{ adjustedPrice ?? trip.price }} {{currency}}</p>
     </div>
 
-    <div id="reservation-buttons">
-        <button *ngIf="shouldDisplayPlusButton()" class="btn btn-success pl-4 pr-4" (click)="reserve()">+</button>
-        <button *ngIf="shouldDisplayMinusButton()" class="btn btn-danger pl-4 pr-4" (click)="cancel()">-</button>
+    <div id="trip-page-button">
+        <button class="btn btn-primary pl-4 pr-4" (click)="goToTripPage()">Trip Page</button>
     </div>
-
-    <div id="control-buttons">
-        <!-- <button class="btn btn-primary pl-4 pr-4" (click)="edit()">Edit</button> -->
-        <button class="btn btn-danger pl-4 pr-4" (click)="remove()">Remove</button>
-    </div>
-
-    <div id="rating">
-        <p>Average rating: {{trip.averageRating.toFixed(2)}}</p>
-        <p>Number of reviews: {{trip.ratings.length}}</p>
-        <button class="btn btn-primary pl-4 pr-4" (click)="rate()">Rate</button>
+    <div *ngIf="isAdmin()" id="trip-page-button">
+        <button class="btn btn-primary pl-4 pr-4" (click)="goToUpdateTripPage()">Edit Trip</button>
     </div>
 </section>

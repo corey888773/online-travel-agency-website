@@ -1,0 +1,40 @@
+<section class="container border-dark border rounded p-3">
+    <form class="d-flex flex-column" [formGroup]="tripForm">
+        <div id="inputs" class="d-flex flex-column justify-content-around">
+            <label for="name">Name</label>
+            <input type="text" id="name" formControlName="name">
+        
+            <label for="destination">Destination</label>
+            <input type="text" id="destination" formControlName="destination">
+        
+            <label for="description">Description</label>
+            <input type="text" id="description" formControlName="description">
+
+    
+            <label for="startDate">Start Date</label>
+            <input type="date" id="startDate" formControlName="startDate">
+        
+            <label for="endDate">End Date</label>
+            <input type="date" id="endDate" formControlName="endDate">
+        
+            <label for="price">Price</label>
+            <input type="number" id="price" formControlName="price">
+        
+            <!-- available options USD/EUR/PLN -->
+            <label for="currency">Currency</label>
+            <select id="currency" formControlName="currency">
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="PLN">PLN</option>
+            </select>
+        
+            <label for="maxSlots">Max Slots</label>
+            <input type="number" id="maxSlots" formControlName="maxSlots">
+        
+            <label for="image">Image</label>
+            <input type="file" id="image" (change)="onFileSelected($event)" formControlName="image">
+        </div>
+        <button type="submit" (click)="onSubmit()">Add Trip</button>
+    </form>
+</section>
+

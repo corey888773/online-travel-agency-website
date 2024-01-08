@@ -1,0 +1,25 @@
+<section class="container border bd-dark rounded mb-3">
+    <div>
+        <p class="text-center">{{tripReservation.tripName}}</p>
+        <p class="text-center">{{determineCompletionStatus()}}</p>
+        <p class="text-center">{{tripReservation.tripDestination}}</p>
+        <p class="text-center">Reservation Status: {{tripReservation.reservationStatus}}</p>
+        <p class="text-center">{{tripReservation.quantity}}</p>
+        <p class="text-center">{{tripReservation.tripStartDate}}</p>
+        <p class="text-center">{{tripReservation.tripEndDate}}</p>
+    </div>
+    <div>
+        <button class="btn btn-primary" (click)="goToTripPage()">Go to trip</button>
+    </div>
+    <div *ngIf="tripReservation.rating === 0"  class="container d-flex flex-row">
+        <p>Rate:</p>
+        <div *ngFor="let rating of [1, 2, 3, 4, 5]" class="ms-3">
+            <input type="radio" name="rating" [value]="rating" (change)="rate($event)">
+            <label>{{rating}}</label>
+        </div>
+    </div>
+    <div *ngIf="tripReservation.rating !== 0" class="container">
+        <p>Your rate: {{tripReservation.rating}}</p>
+        <button class="btn btn-primary" (click)="removeRate()">Edit</button>
+    </div>
+</section>

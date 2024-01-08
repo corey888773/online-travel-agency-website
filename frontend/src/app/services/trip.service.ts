@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Trip } from '../trips/trip';
 import { map } from 'rxjs/operators';
 import { GetTripsParams } from '../trips/get-trips-params';
+import { formatDate } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -47,10 +48,11 @@ export class TripService {
     return this.httpClient.get(url).pipe(
       map((response: any) => {
         const trips = response.trips.map((trip: any) => {
-          const tripObj: Trip = {
+          const tripObj: any = {
             id: trip.id,
             name: trip.name,
             description: trip.description,
+            destination: trip.destination,
             price: trip.price,
             imgUrl: trip.imgUrl,
             imgAlt: trip.imgAlt,
@@ -59,15 +61,51 @@ export class TripService {
             startDate: new Date(trip.startDate),
             endDate: new Date(trip.endDate),
             currency: trip.currency,
-            destination: trip.destination,
-            averageRating: trip.averageRating ?? 0,
-            ratings: trip.ratings ?? [],
-            reserved: trip.reserved ?? false,
           };
           return tripObj;
           });
 
         return trips;
       }));
+  }
+
+  public addTrip(trip : Trip) : Observable<string> {
+    return this.httpClient.post<string>(this.baseUrl, trip);
+  }
+
+  public updateTrip(trip : Trip) : Observable<Trip> {
+    return this.httpClient.patch<Trip>(this.baseUrl + trip.id, trip);
+  }
+
+  public getTrip(id : string) : Observable<Trip> {
+    return this.httpClient.get<Trip>(this.baseUrl + id).pipe(
+      map((response : any) => {
+        
+        const trip : Trip = {
+          id: response.trip.id,
+          name: response.trip.name,
+          description: response.trip.description,
+          destination: response.trip.destination,
+          price: response.trip.price,
+          imgUrl: response.trip.imgUrl,
+          imgAlt: response.trip.imgAlt,
+          maxGuests: response.trip.maxGuests,
+          available: response.trip.available,
+          startDate: this.formatDate(response.trip.startDate),
+          endDate: this.formatDate(response.trip.endDate),
+          currency: response.trip.currency,
+          reserved: response.trip.reserved,
+          averageRating: response.trip.averageRating,
+          ratings: response.trip.ratings,
+        };
+
+        console.log(trip);
+        return trip;
+      }));
+  }
+
+  formatDate(dateString: string): Date {
+    const formattedDate = formatDate(dateString, 'yyyy-MM-dd', 'en-US');
+    return new Date(formattedDate);
   }
 }

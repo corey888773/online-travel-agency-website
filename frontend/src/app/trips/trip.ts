@@ -1,5 +1,5 @@
 export interface Trip {
-    id: string;
+    id: string | undefined;
     name: string;
     destination: string;
     startDate: Date;
@@ -13,5 +13,10 @@ export interface Trip {
     imgAlt: string;
     reserved: boolean;
     averageRating: number;
-    ratings: number[];
+    ratings: Rating[];
+}
+
+export interface Rating {
+    username: string;
+    rating: number;
 }

@@ -26,10 +26,12 @@ export class LoginComponent {
       this.loginForm.value.username!,
       this.loginForm.value.password!,
     ).subscribe((resp) => {
-      console.log(resp);
-
       localStorage.setItem('access_token', resp.session.accessToken!);
+      localStorage.setItem('refresh_token', resp.session.refreshToken!);
+      localStorage.setItem('session_id', resp.session.sessionID!);
+
       this.userService.currentUserSignal.set(resp.user);
+      this.userService.sessionSignal.set(resp.session);
       this.router.navigateByUrl('/');
     })
   }

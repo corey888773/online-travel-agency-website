@@ -1,7 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Trip } from '../trip';
-import { ApiService } from '../../api.service';
+import { Router} from '@angular/router';
+import { FileService } from '../../services/file.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-trip',
@@ -14,21 +16,26 @@ import { ApiService } from '../../api.service';
 export class TripComponent {
   @Input() trip!: Trip;
   @Input() borderColour: string = "black";
-
   @Output() removeTrip = new EventEmitter<Trip>();
 
-  constructor(private apiService : ApiService) { }
+  router = inject(Router);
+  fileService = inject(FileService);
+  userService = inject(UserService);
+
+  constructor() { }
 
   remove(): void {
     this.removeTrip.emit(this.trip);
   }
 
-  adjustedPrice!: number;
+  adjustedPrice!: string;
+  currency: string = "USD";
   currenciesMap: { [key: string]: number } = {
-    'PLN': 4.5,
-    'EUR': 1,
-    'USD': 1.2
+    'PLN': 4,
+    'EUR': 0.91,
+    'USD': 1
   }
+
   shouldDisplayPlusButton(): boolean {
     return !this.trip.reserved && !this.isFull()
   }
@@ -45,49 +52,36 @@ export class TripComponent {
     return this.trip.maxGuests - this.trip.available === this.trip.maxGuests
   }  
 
-  reserve(): void {
-    this.trip.available--;
-    this.trip.reserved = true;
-
-    if (this.isFull()) {
-      this.apiService.reserveTrip(this.trip, 1)
-      alert("This trip is now full!")
-    } else if (this.isAlmostFull()) {
-      this.apiService.reserveTrip(this.trip, 1)
-      alert("There are only a few slots left!")
-    }
-    else {
-      this.apiService.reserveTrip(this.trip, 1)
-      alert("You have successfully reserved a slot!")
-    }
-  }
-
   cancel(): void {
     this.trip.available++;
     this.trip.reserved = false;
-    this.apiService.cancelReservation(this.trip)
     alert("You have successfully canceled your reservation!")
   }
 
   calculatePrice(event : Event): void {
-    this.adjustedPrice = this.trip.price * this.currenciesMap[(event.target as HTMLInputElement).value];
-  }
-
-  rate(): void {
-    const rating = parseInt(prompt("Please enter your rating (1-5):") || "0");
-    if (rating >= 1 && rating <= 5) {
-      this.trip.ratings.push(rating);
-      this.trip.averageRating = this.trip.ratings.reduce((a, b) => a + b, 0) / this.trip.ratings.length;
-      alert("Thank you for your rating!")
-    } else {
-      alert("Please enter a valid rating!")
+    this.currency = (<HTMLInputElement>event.target).value;
+    const currencyValue = this.currenciesMap[this.currency];
+    if (currencyValue !== undefined) {
+      this.adjustedPrice = (this.trip.price * currencyValue).toFixed(2);
     }
   }
 
   getImageUrl(): string {
-    const baseUrl = 'http://localhost:8000';
-    return `${baseUrl}/${this.trip.imgUrl}`;
+    return this.fileService.getImagePath(this.trip.imgUrl);
+  }
+
+  goToTripPage(): void {
+    this.router.navigateByUrl(`/trips/${this.trip.id}`);
+  }
+
+  goToUpdateTripPage(): void {
+    this.router.navigateByUrl(`/trips/update/${this.trip.id}`);
+  }
+
+  isAdmin() : boolean {
+    return this.userService.currentUserSignal()?.role === 'admin';
   }
 }
+
 
 

@@ -1,14 +1,10 @@
 import { Component, inject} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TripComponent } from '../trip/trip.component';
-import { TripFormComponent } from '../trip-form/trip-form.component';
 import { Trip } from '../trip';
 import { OnInit } from '@angular/core';
-import { ApiService } from '../../api.service';
 import { FormsModule } from '@angular/forms';
 import { OffersFilterComponent } from '../trips-page-filter/offers-filter.component';
-import { Basket } from '../../interfaces/basket';
-import { BasketWidgetComponent } from '../basket-widget/basket-widget.component';
 import { TripService } from '../../services/trip.service';
 import { GetTripsParams } from '../get-trips-params';
 
@@ -18,18 +14,14 @@ import { GetTripsParams } from '../get-trips-params';
   imports: [
     CommonModule, 
     TripComponent, 
-    TripFormComponent, 
     FormsModule,
     OffersFilterComponent,
-    BasketWidgetComponent
   ],
-  templateUrl: './offers.component.html',
-  styleUrl: './offers.component.css'
+  templateUrl: './offers-page.component.html',
+  styleUrl: './offers-page.component.css',
 })
-export class OffersComponent implements OnInit{
+export class OffersPageComponent implements OnInit{
   trips: Trip[] = [];
-  filteredTrips: Trip[] = [];
-  basket!: Basket;
 
   tripService = inject(TripService);
 
@@ -45,9 +37,7 @@ export class OffersComponent implements OnInit{
       sortBy: undefined,
     };
     this.tripService.getTrips(params).subscribe((data: any[]) => {
-      console.log(data);
-
-      this.filteredTrips = data;
+      this.trips = data;
     });
   } 
 
@@ -77,10 +67,7 @@ export class OffersComponent implements OnInit{
 
   filterTrips(params : GetTripsParams) : void {
     this.tripService.getTrips(params).subscribe((data: any[]) => {
-      console.log(data);
-
-      this.trips = data
-      this.filteredTrips = data;
+      this.trips = data;
     });
   }
 }

@@ -1,0 +1,19 @@
+<section class="container border bd-dark rounded">
+    <div *ngFor="let item of shoppingCart.items" class="container border bd-dark rounded mb-3">
+        <p>{{item.tripName}}</p>
+        <p>{{item.tripDestination}}</p>
+        <p>{{item.tripStartDate}}</p>
+        <p>{{item.tripEndDate}}</p>
+        <input type="number" [value]="item.quantity" (change)="updateQuantity(item, $event)" min="1" max="{{item.tripAvailable}}">
+        <p> {{item.tripPrice * item.quantity}} {{item.tripCurrency}}</p>
+        <div>
+            <button class="btn btn-danger" (click)="removeItem(item)">Remove</button>
+            <button class="btn btn-primary" (click)="goToTripPage(item)">Go to trip</button>
+        </div>
+    </div>
+    <button *ngIf="shoppingCart.items.length > 0" class="btn btn-primary" (click)="checkout()">Place order</button>
+    <div *ngIf="shoppingCart.items.length === 0" class="container border bd-dark rounded mb-3">
+        <h1>Empty cart</h1>
+        <button class="btn btn-primary" (click)="goToOffersPage()">Go to offers</button>
+    </div>
+</section>

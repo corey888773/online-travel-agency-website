@@ -16,6 +16,9 @@
           <li *ngIf="userService.currentUserSignal()" class="nav-item">
             <a class="nav-link" (click)="logout()" ariaCurrentWhenActive="page">Logout</a>
           </li>
+          <li *ngIf="userService.currentUserSignal()" class="nav-item">
+            <a class="nav-link" routerLink="/reservations" routerLinkActive="active" ariaCurrentWhenActive="page">My Trips</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page">Home</a>
           </li>
@@ -23,9 +26,10 @@
             <a class="nav-link" routerLink="/offers" routerLinkActive="active" ariaCurrentWhenActive="page">Offers</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" routerLink="/offers/add" routerLinkActive="active" ariaCurrentWhenActive="page">Add Offer</a>
+            <a class="nav-link" routerLink="/trips/add" routerLinkActive="active" ariaCurrentWhenActive="page">Add Offer</a>
           </li>
       </ul> 
   </div>
 </nav>
+<app-shopping-cart-widget *ngIf="shouldDisplayCartWidget()"></app-shopping-cart-widget>
 <router-outlet></router-outlet>
