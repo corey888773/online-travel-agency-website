@@ -15,9 +15,10 @@ type Server struct {
 	mongoDb    *mongo.Client
 	tokenMaker token.TokenMaker
 
-	tripRepository    data.TripRepository
-	userRepository    data.UserRepository
-	sessionRepository data.SessionRepository
+	tripRepository            data.TripRepository
+	userRepository            data.UserRepository
+	sessionRepository         data.SessionRepository
+	tripReservationRepository data.TripReservationRepository
 }
 
 func NewServer(config util.Config, mongoClient *mongo.Client, tokenMaker token.TokenMaker) (*Server, error) {
@@ -45,8 +46,7 @@ func (s *Server) SetupRouter() {
 	userRoutes := s.router.Group("/users").Use(authenticationMiddleware(s.tokenMaker))
 	userRoutes.GET("/", s.listUsers)
 	userRoutes.GET("/me", s.getCurrentUser)
-	userRoutes.DELETE("/:id", s.deleteUser)
-	userRoutes.PATCH("/:id", s.updateUser)
+	userRoutes.DELETE("/:id", s.deleteUser).PATCH("/:id", s.updateUser)
 	userRoutes.PATCH("/password", s.updatePassword)
 
 	// trip routes
@@ -55,6 +55,13 @@ func (s *Server) SetupRouter() {
 	tripRoutes.GET("/:id", s.getTrip)
 	tripRoutes.Use(authorizationMiddleware(types.AdminRole)).POST("/", s.addTrip)
 	tripRoutes.Use(authorizationMiddleware(types.AdminRole)).PATCH("/:id", s.updateTrip).DELETE("/:id", s.deleteTrip)
+
+	// trip reservation routes
+	tripReservationRoutes := s.router.Group("/tripReservations").Use(authenticationMiddleware(s.tokenMaker))
+	tripReservationRoutes.POST("/", s.addReservation).DELETE("/", s.deleteReservation)
+	tripReservationRoutes.PATCH("/status", s.changeReservationStatus)
+	tripReservationRoutes.PATCH("/rate", s.rateTrip)
+	tripReservationRoutes.GET("/me", s.getMyReservations)
 
 	// file server
 	s.router.Static("/public", "./public")
@@ -85,6 +92,12 @@ func (s *Server) setupDb() error {
 	}
 	s.sessionRepository = sessionRepository
 
+	tripReservationRepository, err := data.NewMongoDbTripReservationRepository(*usersCollection, *tripCollection)
+	if err != nil {
+		return err
+	}
+	s.tripReservationRepository = tripReservationRepository
+
 	return nil
 }
 
@@ -95,5 +108,11 @@ func (s *Server) Start(port string) error {
 func errorResponse(err error) gin.H {
 	return gin.H{
 		"error": err.Error(),
+	}
+}
+
+func successResponse() gin.H {
+	return gin.H{
+		"success": true,
 	}
 }

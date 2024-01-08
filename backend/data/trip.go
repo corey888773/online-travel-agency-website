@@ -24,8 +24,13 @@ type Trip struct {
 	Currency      types.Currency     `bson:"currency" json:"currency"`
 	MaxGuests     int64              `bson:"maxGuests" json:"maxGuests"`
 	Available     int64              `bson:"available" json:"available"`
-	Ratings       []int64            `bson:"ratings" json:"ratings"`
+	Ratings       []Rating           `bson:"ratings" json:"ratings"`
 	AverageRating float64            `bson:"averageRating" json:"averageRating"`
+}
+
+type Rating struct {
+	Username string `bson:"username" json:"username"`
+	Rating   int64  `bson:"rating" json:"rating"`
 }
 
 type TripRepository interface {

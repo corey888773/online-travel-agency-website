@@ -45,7 +45,7 @@ func (s *Server) addTrip(ctx *gin.Context) {
 		Currency:      request.Currency,
 		MaxGuests:     request.MaxGuests,
 		Available:     request.Available,
-		Ratings:       []int64{},
+		Ratings:       []data.Rating{},
 		AverageRating: 0,
 	}
 

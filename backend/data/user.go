@@ -22,6 +22,7 @@ type User struct {
 	CreatedAt         time.Time          `bson:"createdAt" json:"createdAt"`
 	UpdatedAt         time.Time          `bson:"updatedAt" json:"updatedAt"`
 	PasswordChangedAt time.Time          `bson:"passwordChangedAt" json:"passwordChangedAt"`
+	TripReservations  []TripReservation  `bson:"tripReservations" json:"tripReservations"`
 }
 
 type UserRepository interface {
