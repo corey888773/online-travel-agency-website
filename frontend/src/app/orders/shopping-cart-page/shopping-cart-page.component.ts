@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { ShoppingCart } from '../shopping-cart';
 import { ShoppingCartItem } from '../shopping-cart';
 import { Router } from '@angular/router';
+import { TripReservationService } from '../../services/trip-reservation.service';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-shopping-cart-page',
@@ -14,6 +16,8 @@ import { Router } from '@angular/router';
 })
 export class ShoppingCartPageComponent implements OnInit {
   shoppingCartService = inject(ShoppingCartService);
+  tripReservationService = inject(TripReservationService);
+  userService = inject(UserService);
   shoppingCart! : ShoppingCart;
   router = inject(Router);
 
@@ -32,7 +36,18 @@ export class ShoppingCartPageComponent implements OnInit {
 
   checkout(): void {
     alert('Thank you for your purchase! Redirecting to payment service...');
-    this.shoppingCartService.clearCart();
+    let username = this.userService.currentUserSignal()?.username;
+    this.shoppingCart.items.map(item => {
+      this.tripReservationService.reserveTrip(username!, item.tripID, item.quantity).subscribe({
+        next: (resp) => {
+          this.shoppingCartService.removeItem(item);
+          alert(resp.message);
+        },
+        error: (err) => {
+          alert(err.error);
+        }
+      });
+    });
   }
 
   updateQuantity(item : ShoppingCartItem, event : Event): void {

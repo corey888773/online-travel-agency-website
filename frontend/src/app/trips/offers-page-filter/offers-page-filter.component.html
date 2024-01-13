@@ -1,14 +1,3 @@
-<!-- <p>offers-filter works!</p>
-<p>Search term: {{searchTerm}}</p>
-<p>Filtered trips: {{tripsLength}}</p>
-<p>filterByPriceMin: {{filterByPriceMin}}</p>
-<p>filterByPriceMax: {{filterByPriceMax}}</p>
-<p>filterByRatings: {{ratingsFilter}}</p>
-<p>filterByDestination: {{filterByDestination}}</p>
-<p>filterByDatesMin: {{filterByDatesMin}}</p>
-<p>filterByDatesMax: {{filterByDatesMax}}</p>
-<p>sortBy: {{sortBy}}</p> -->
-
 <section id="filters" class="container border border-dark rounded p-3">
     <form>
         <div class="d-flex flex-column">
@@ -20,15 +9,17 @@
             <label for="ratings">Ratings</label>
             <div id="rating-checkboxes">
                 <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[0]" [value]="false">
-                <label for="ratings">5</label>
+                <label for="ratings">0</label>
                 <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[1]" [value]="false">
-                <label for="ratings">4</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[2]" [value]="false">
-                <label for="ratings">3</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[3]" [value]="false">
-                <label for="ratings">2</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[4]" [value]="false">
                 <label for="ratings">1</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[2]" [value]="false">
+                <label for="ratings">2</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[3]" [value]="false">
+                <label for="ratings">3</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[4]" [value]="false">
+                <label for="ratings">4</label>
+                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[5]" [value]="false">
+                <label for="ratings">5</label>
             </div>
 
             <label for="destination">Destination</label>

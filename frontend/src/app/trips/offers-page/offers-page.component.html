@@ -7,7 +7,7 @@
 </section>
 
 <section id="filters">
-    <app-offers-filter [trips]="trips" (filterParams)="filterTrips($event)"></app-offers-filter>
+    <app-offers-page-filter [trips]="trips" (filterParams)="filterTrips($event)"></app-offers-page-filter>
 </section>
 <app-trip *ngFor="let trip of trips" 
 [trip]="trip" 

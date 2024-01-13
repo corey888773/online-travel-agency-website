@@ -74,10 +74,14 @@ export class UpdateTripFormComponent {
       imgUrl: this.currentTrip.imgUrl,
       imgAlt: this.currentTrip.imgAlt,
       reserved: false,
-      available: this.tripForm.value.maxSlots,
+      available: this.currentTrip.available,
       averageRating: this.currentTrip.averageRating,
       ratings: this.currentTrip.ratings,
     };
+
+    if (trip.available > trip.maxGuests) {
+      trip.available = trip.maxGuests;
+    }
 
     if (!this.willUpdateImageFlag) {
       this.updateTrip(trip);

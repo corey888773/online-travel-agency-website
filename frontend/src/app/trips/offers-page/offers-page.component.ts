@@ -4,7 +4,7 @@ import { TripComponent } from '../trip/trip.component';
 import { Trip } from '../trip';
 import { OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { OffersFilterComponent } from '../trips-page-filter/offers-filter.component';
+import { OffersPageFilterComponent } from '../offers-page-filter/offers-page-filter.component';
 import { TripService } from '../../services/trip.service';
 import { GetTripsParams } from '../get-trips-params';
 
@@ -15,7 +15,7 @@ import { GetTripsParams } from '../get-trips-params';
     CommonModule, 
     TripComponent, 
     FormsModule,
-    OffersFilterComponent,
+    OffersPageFilterComponent
   ],
   templateUrl: './offers-page.component.html',
   styleUrl: './offers-page.component.css',

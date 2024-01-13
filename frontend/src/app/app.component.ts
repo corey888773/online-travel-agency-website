@@ -31,38 +31,13 @@ export class AppComponent implements OnInit{
       },
       error: () => {
         this.userService.currentUserSignal.set(null);
-        this.renewAccessToken();
         }
       }
     );
   }
 
-  renewAccessToken(): void {
-    let sessionID = localStorage.getItem('session_id');
-    let refreshToken = localStorage.getItem('refresh_token');
-
-    if (!sessionID && !refreshToken) 
-      return;
-
-    this.userService.renewAccessToken(sessionID!, refreshToken!).subscribe({
-      next: (response) => {
-        localStorage.setItem('access_token', response.accessToken!);
-
-        this.userService.getCurrentUser().subscribe({
-          next: (user) => {
-            this.userService.currentUserSignal.set(user);
-          },
-          error: () => {
-            this.userService.currentUserSignal.set(null);
-            return;
-          }
-        });
-      },
-      error: () => {
-        this.userService.currentUserSignal.set(null);
-        return;
-      }
-    });
+  canViewManagePaths(): boolean {
+    return this.userService.currentUserSignal()?.role === 'admin';
   }
 
   logout(): void {

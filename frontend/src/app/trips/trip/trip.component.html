@@ -1,29 +1,179 @@
-<section class="container rounded mt-3 p-2 trip" 
-        [ngClass]="{warning : isAlmostFull(1)}"
+<style>
+    *{
+        --primary-text-color: #0d6efd;
+        --secondary-text-color: #6c757d;
+
+        --warning-background-color: #fef8ec;
+    }
+
+    .shadowed{
+        border-radius: 100px solid #ccc;
+        box-shadow: 10px 10px 20px 0 rgba(0, 0, 0, 1);
+    }
+
+    #img-details{
+        flex: 7;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #imgdiv{
+        flex:1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #details{
+        flex:4;
+        padding: 1rem 2rem;
+    }
+
+    #description p{
+        margin: 0.5rem 0;
+        color: var(--secondary-text-color);
+    }
+
+    #dates p{
+        font-weight: bolder;
+    }
+
+    #controls{
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
+    }
+
+    #main{
+        position: relative;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #dates{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    #price{
+        width: 50%;
+        margin-left: 50%;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+
+    }
+
+    #price select{
+        width: 100px;
+    }
+
+    #price p {
+        margin: 0 0 0 0.5rem;
+    }
+
+    .trip {
+        box-shadow: 3px 3px 10px 0 rgba(0, 0, 0, 0.5);
+        border:2px solid #ccc;
+    }
+
+    .warning {
+        background-color: var(--warning-background-color);
+    }
+
+    .photo {
+        width: 200px;
+        height: 200px;
+        margin-left: 0%;
+        background-size: cover;
+        background-position: center;
+        border-radius: 50%;
+    }
+
+    .round-button{
+        border-radius: 50%;
+        width: 70px;
+        height: 70px;
+    }
+
+    @media (max-width: 768px){
+        #main{
+            flex-direction: column;
+        }
+        #controls{
+            flex:1;
+            flex-direction: row;
+        }
+
+        #price{
+            width: 100%;
+            margin-left: 0%;
+        }
+
+        #price p{
+            margin: 0;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .photo {
+            width: 100%;
+            height: calc(100vw - 4rem);       
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+        }
+
+        #img-details{
+            flex-direction: column;
+        }
+    }
+
+</style>
+<section class="container rounded mt-3 p-3 trip" 
+        [ngClass]="{warning : isAlmostFull(3)}"
         [ngStyle]="{'border-color':borderColour}">
-    <h1 class="text-center"> {{trip.name}}</h1>
-    <picture>
-        <img class="photo" [src]="getImageUrl()" alt="trip photo">
-    </picture>
-    <div id="description">
-        <p>{{trip.destination}}</p>
-        <p>{{trip.description}}</p>
-        <p>Start date: {{trip.startDate}}</p>
-        <p>End date: {{trip.endDate}}</p>
-        <p>Available slots: {{trip.available}}</p>
-    </div>
-
-    <div id="price">
-        <select class="form-select" (change)="calculatePrice($event)">
-            <option *ngFor="let key of currenciesMap | keyvalue" [value]="key.key">{{key.key}}</option>
-        </select>
-        <p>Price: {{ adjustedPrice ?? trip.price }} {{currency}}</p>
-    </div>
-
-    <div id="trip-page-button">
-        <button class="btn btn-primary pl-4 pr-4" (click)="goToTripPage()">Trip Page</button>
-    </div>
-    <div *ngIf="isAdmin()" id="trip-page-button">
-        <button class="btn btn-primary pl-4 pr-4" (click)="goToUpdateTripPage()">Edit Trip</button>
-    </div>
+    <div id="main">
+        <div id="img-details">
+            <div id="imgdiv">
+                <picture>
+                    <img class="photo" [src]="getImageUrl()" alt="trip photo">
+                </picture>
+            </div>
+            <div id="details">
+                <h1> {{trip.name}}</h1>
+                <div id="description">
+                    <p>Destination: {{trip.destination}}</p>
+                    <p>Available slots: {{trip.available}}</p>
+                </div>
+                <div id="dates">
+                    <p>Start date: {{formatDate(trip.startDate)}}</p>
+                    <p>End date: {{formatDate(trip.startDate)}}</p>
+                </div>
+                
+                <div id="price">
+                    <p>Price: {{ adjustedPrice ?? trip.price }} {{currency}}</p>
+                    <select class="form-select" (change)="calculatePrice($event)">
+                        <option *ngFor="let key of currenciesMap | keyvalue" [value]="key.key">{{key.key}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    
+        <div id=controls>
+            <div id="trip-page-button">
+                <button class="btn btn-primary round-button" (click)="goToTripPage()"><i class="fas fa-arrow-right"></i></button>
+            </div>
+            <div *ngIf="isAdmin()" id="trip-page-button">
+                <button class="btn btn-primary round-button" (click)="goToUpdateTripPage()"><i class="fas fa-edit"></i></button>
+            </div>
+        </div>
+    </div>    
+    
 </section>

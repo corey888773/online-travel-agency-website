@@ -7,7 +7,7 @@ import { GetTripsParams } from '../get-trips-params';
 import { TripService } from '../../services/trip.service';
 
 @Component({
-  selector: 'app-offers-filter',
+  selector: 'app-offers-page-filter',
   standalone: true,
   imports: [
     CommonModule,
@@ -15,18 +15,14 @@ import { TripService } from '../../services/trip.service';
     FormsModule
   ],
   providers: [TripFilterPipe],
-  templateUrl: './offers-filter.component.html',
-  styleUrl: './offers-filter.component.css'
+  templateUrl: './offers-page-filter.component.html',
+  styleUrl: './offers-page-filter.component.css'
 })
-export class OffersFilterComponent implements OnInit {
+export class OffersPageFilterComponent implements OnInit {
   @Input () trips!: Trip[];
-  tripsLength!: number;
   @Output () filterParams = new EventEmitter<GetTripsParams>();
   tripService = inject(TripService);
-
-  constructor (
-    private tripFilterPipe: TripFilterPipe
-  ) {}
+  tripsLength!: number;
 
   filterByPriceMin : number | undefined;
   filterByPriceMax : number | undefined;
@@ -43,13 +39,9 @@ export class OffersFilterComponent implements OnInit {
     this.resetFilters();
   }
 
-  applyFilters( ) : void {  
+  applyFilters( ) : void { 
     if (!this.filterByRatings) this.filterByRatings = [];
-    for (let i = 0; i < this.filterByRatings.length; i++) {
-      if (this.filterByRatings[i]) {
-        this.ratingsFilter.push(i);
-      }
-    }
+    this.calculateRatingsFilter();
 
     const params : GetTripsParams = {
       minPrice: this.filterByPriceMin,
@@ -71,6 +63,7 @@ export class OffersFilterComponent implements OnInit {
     this.filterByPriceMax = undefined;
     this.filterByName = undefined;
     this.filterByRatings = [];
+    this.ratingsFilter = [];
     this.filterByDestination = undefined;
     this.filterByDatesMin = undefined;
     this.filterByDatesMax = undefined;
@@ -78,6 +71,15 @@ export class OffersFilterComponent implements OnInit {
     this.sortBy = undefined;
     
     this.applyFilters();
+  }
+
+  calculateRatingsFilter() : void {
+    this.ratingsFilter = [];
+    for (let i = 0; i < this.filterByRatings.length; i++) {
+      if (this.filterByRatings[i]) {
+        this.ratingsFilter.push(i);
+      }
+    }
   }
 
   searchFor(event: Event) {

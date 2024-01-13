@@ -60,8 +60,12 @@ export class UserService {
 
   public logout() : void {
     localStorage.setItem('access_token', '');
+    localStorage.setItem('access_token_expires_at', '');
     localStorage.setItem('refresh_token', '');
+    localStorage.setItem('refresh_token_expires_at', '');
     localStorage.setItem('session_id', '');
+    sessionStorage.setItem('shopping_cart', '');
+
     this.currentUserSignal.set(null);
   }
 

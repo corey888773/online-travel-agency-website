@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject, OnInit} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Trip } from '../trip';
 import { Router} from '@angular/router';
@@ -13,7 +13,7 @@ import { UserService } from '../../services/user.service';
   styleUrl: './trip.component.css'
 })
 
-export class TripComponent {
+export class TripComponent implements OnInit {
   @Input() trip!: Trip;
   @Input() borderColour: string = "black";
   @Output() removeTrip = new EventEmitter<Trip>();
@@ -22,7 +22,9 @@ export class TripComponent {
   fileService = inject(FileService);
   userService = inject(UserService);
 
-  constructor() { }
+  ngOnInit(): void {
+    this.adjustedPrice = this.trip.price.toFixed(2);
+  }
 
   remove(): void {
     this.removeTrip.emit(this.trip);
@@ -45,7 +47,7 @@ export class TripComponent {
   }
 
   isAlmostFull(treshold: number = 3): boolean {
-    return this.trip.maxGuests - this.trip.available >= this.trip.maxGuests - treshold
+    return this.trip.available <= treshold;
   }
 
   isFull(): boolean {
@@ -80,6 +82,10 @@ export class TripComponent {
 
   isAdmin() : boolean {
     return this.userService.currentUserSignal()?.role === 'admin';
+  }
+
+  formatDate(date: Date): string {
+    return date.toLocaleDateString();
   }
 }
 

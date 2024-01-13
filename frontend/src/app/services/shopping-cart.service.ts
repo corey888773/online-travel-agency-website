@@ -8,6 +8,7 @@ import { ShoppingCartItem } from '../orders/shopping-cart';
 })
 export class ShoppingCartService{
   shoppingCartSignal = signal<ShoppingCart> ({
+    username: '',
     items: [],
     totalPrice: 0,
     currency: 'USD',

@@ -2,6 +2,7 @@
   <a href="#" class="navbar-brand ms-3">
       Online Travel Agency
   </a>
+  <app-shopping-cart-widget *ngIf="shouldDisplayCartWidget()"></app-shopping-cart-widget>
   <button type="button" class="navbar-toggler navbar-toggler-right" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
        <span class="navbar-toggler-icon"></span>
   </button>
@@ -25,11 +26,10 @@
           <li class="nav-item">
             <a class="nav-link" routerLink="/offers" routerLinkActive="active" ariaCurrentWhenActive="page">Offers</a>
           </li>
-          <li class="nav-item">
+          <li *ngIf="canViewManagePaths()" class="nav-item">
             <a class="nav-link" routerLink="/trips/add" routerLinkActive="active" ariaCurrentWhenActive="page">Add Offer</a>
           </li>
       </ul> 
   </div>
 </nav>
-<app-shopping-cart-widget *ngIf="shouldDisplayCartWidget()"></app-shopping-cart-widget>
 <router-outlet></router-outlet>

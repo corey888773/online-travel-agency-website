@@ -27,7 +27,9 @@ export class LoginComponent {
       this.loginForm.value.password!,
     ).subscribe((resp) => {
       localStorage.setItem('access_token', resp.session.accessToken!);
+      localStorage.setItem('access_token_expires_at', resp.session.accessTokenExpiresAt!.toString());
       localStorage.setItem('refresh_token', resp.session.refreshToken!);
+      localStorage.setItem('refresh_token_expires_at', resp.session.refreshTokenExpiresAt!.toString());
       localStorage.setItem('session_id', resp.session.sessionID!);
 
       this.userService.currentUserSignal.set(resp.user);
