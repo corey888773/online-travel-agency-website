@@ -5,6 +5,7 @@ networks:
 
 services: 
   ota-mongo:
+    container_name: ota-mongo
     image: mongo:latest
     restart: always
     ports:
@@ -15,6 +16,7 @@ services:
         - ota
         
   ota-backend:
+    container_name: api
     build:
       context: './backend'
       dockerfile: 'Dockerfile'

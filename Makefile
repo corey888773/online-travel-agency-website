@@ -8,10 +8,10 @@ dstart:
 	docker run -p 8000:8000 --name ota  --network ota  ota:latest
 
 composeup:
-	docker-compose up -d --build --remove-orphans
+	docker-compose up --build --remove-orphans
 
 composedown:
-	docker-compose down --remove-orphans
+	docker-compose down --remove-orphans --rmi all
 
 composepush:
 	docker-compose push
