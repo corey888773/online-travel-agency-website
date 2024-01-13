@@ -21,14 +21,14 @@ type registerUserRequest struct {
 }
 
 type userResponse struct {
-	ID                string    `json:"id"`
-	Username          string    `json:"username"`
-	FullName          string    `json:"fullName"`
-	Email             string    `json:"email"`
-	Role              string    `json:"role"`
-	PasswordChangedAt time.Time `json:"passwordChangedAt"`
-	UpdatedAt         time.Time `json:"updatedAt"`
-	CreatedAt         time.Time `json:"createdAt"`
+	ID                string `json:"id"`
+	Username          string `json:"username"`
+	FullName          string `json:"fullName"`
+	Email             string `json:"email"`
+	Role              string `json:"role"`
+	PasswordChangedAt string `json:"passwordChangedAt"`
+	UpdatedAt         string `json:"updatedAt"`
+	CreatedAt         string `json:"createdAt"`
 }
 
 func newUserResponse(user *data.User) userResponse {
@@ -38,8 +38,9 @@ func newUserResponse(user *data.User) userResponse {
 		FullName:          user.FullName,
 		Role:              user.Role.String(),
 		Email:             user.Email,
-		PasswordChangedAt: user.PasswordChangedAt,
-		CreatedAt:         user.CreatedAt,
+		PasswordChangedAt: user.PasswordChangedAt.Format("2006-01-02T15:04:05.000Z"),
+		CreatedAt:         user.CreatedAt.Format("2006-01-02T15:04:05.000Z"),
+		UpdatedAt:         user.UpdatedAt.Format("2006-01-02T15:04:05.000Z"),
 	}
 }
 
@@ -65,6 +66,7 @@ func (s *Server) registerUser(ctx *gin.Context) {
 		CreatedAt:         time.Now(),
 		UpdatedAt:         time.Now(),
 		PasswordChangedAt: time.Now(),
+		TripReservations:  []data.TripReservation{},
 	}
 
 	if request.Username == "admin" {
@@ -166,7 +168,21 @@ func (s *Server) updateUser(ctx *gin.Context) {
 		return
 	}
 
+	authPayload, ok := ctx.Get(authorizationPayloadKey)
+	if !ok {
+		err := errorResponse(errors.New("authorization payload not found"))
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
 	id := ctx.Param("id")
+
+	pl := authPayload.(*token.Payload)
+	if pl.Role != types.AdminRole && pl.UserId != id {
+		err := errorResponse(errors.New("user is not authorized to change user"))
+		ctx.JSON(http.StatusUnauthorized, err)
+		return
+	}
 
 	user := data.User{
 		Username:  request.Username,
@@ -175,13 +191,13 @@ func (s *Server) updateUser(ctx *gin.Context) {
 		UpdatedAt: time.Now(),
 	}
 
-	err := s.userRepository.Update(id, &user)
+	updatedUser, err := s.userRepository.Update(pl.Username, &user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, newUserResponse(&user))
+	ctx.JSON(http.StatusOK, newUserResponse(updatedUser))
 }
 
 type updateUserRoleRequest struct {
@@ -195,6 +211,20 @@ func (s *Server) updateUserRole(ctx *gin.Context) {
 		return
 	}
 
+	authPayload, ok := ctx.Get(authorizationPayloadKey)
+	if !ok {
+		err := errorResponse(errors.New("authorization payload not found"))
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+
+	pl := authPayload.(*token.Payload)
+	if pl.Role != types.AdminRole {
+		err := errorResponse(errors.New("user is not authorized to change role"))
+		ctx.JSON(http.StatusUnauthorized, err)
+		return
+	}
+
 	id := ctx.Param("id")
 
 	user := data.User{
@@ -202,13 +232,13 @@ func (s *Server) updateUserRole(ctx *gin.Context) {
 		UpdatedAt: time.Now(),
 	}
 
-	err := s.userRepository.Update(id, &user)
+	updatedUser, err := s.userRepository.Update(id, &user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, newUserResponse(&user))
+	ctx.JSON(http.StatusOK, newUserResponse(updatedUser))
 }
 
 func (s *Server) deleteUser(ctx *gin.Context) {
@@ -292,13 +322,13 @@ func (s *Server) updatePassword(ctx *gin.Context) {
 	user.HashedPassword = hashedPassword
 	user.PasswordChangedAt = time.Now()
 
-	err = s.userRepository.Update(user.Username, user)
+	updatedUser, err := s.userRepository.Update(user.Username, user)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
-	ctx.JSON(http.StatusOK, newUserResponse(user))
+	ctx.JSON(http.StatusOK, newUserResponse(updatedUser))
 }
 
 func (s *Server) getCurrentUser(ctx *gin.Context) {

@@ -2,6 +2,8 @@ package data
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/corey888773/online-travel-agency-website/types"
@@ -122,24 +124,25 @@ func (r *MongoDbTripRepository) FindAll(params FindTripsParams) ([]Trip, error) 
 		}
 	}
 
-	// if len(params.Ratings) > 0 {
-	// 	ratings := strings.Split(params.Ratings, ",")
-	// 	for _, rating := range ratings {
-	// 		ratingInt, err := strconv.Atoi(rating)
-	// 		if err != nil {
-	// 			return nil, fmt.Errorf("failed to convert rating: %w", err)
-	// 		}
-	// 		matchStage = append(matchStage, bson.E{
-	// 			Key: "$match",
-	// 			Value: bson.M{
-	// 				"ratings": bson.M{
-	// 					"$gte": ratingInt,
-	// 					"$lt":  ratingInt + 1,
-	// 				},
-	// 			},
-	// 		})
-	// 	}
-	// }
+	averageRatingFilter := []bson.M{}
+	if len(params.Ratings) > 0 {
+		ratings := strings.Split(params.Ratings, ",")
+		for _, rating := range ratings {
+			ratingInt, err := strconv.Atoi(rating)
+			if err != nil {
+				return nil, fmt.Errorf("failed to convert rating: %w", err)
+			}
+			averageRatingFilter = append(averageRatingFilter, bson.M{
+				"averageRating": bson.M{
+					"$gte": float64(ratingInt),
+					"$lt":  float64(ratingInt + 1),
+				},
+			})
+		}
+	}
+	if len(averageRatingFilter) > 0 {
+		filter["$or"] = averageRatingFilter
+	}
 
 	sortOptions := options.Find()
 	var sortRule bson.M

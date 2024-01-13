@@ -47,6 +47,7 @@ func (s *Server) SetupRouter() {
 	userRoutes.GET("/", s.listUsers)
 	userRoutes.GET("/me", s.getCurrentUser)
 	userRoutes.DELETE("/:id", s.deleteUser).PATCH("/:id", s.updateUser)
+	userRoutes.PATCH("/role/:id", s.updateUserRole)
 	userRoutes.PATCH("/password", s.updatePassword)
 
 	// trip routes

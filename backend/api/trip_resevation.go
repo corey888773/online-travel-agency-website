@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"sort"
 	"time"
@@ -36,17 +35,8 @@ func (s *Server) addReservation(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println(trip.Available, request.Quantity)
 	if trip.Available < request.Quantity {
 		ctx.JSON(http.StatusBadRequest, errorResponse(ErrTripNotAvailable))
-		return
-	}
-
-	trip.Available -= request.Quantity
-
-	err = s.tripRepository.Update(request.TripID, trip)
-	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -61,6 +51,14 @@ func (s *Server) addReservation(ctx *gin.Context) {
 	}
 
 	_, err = s.tripReservationRepository.Add(request.Username, &tripReservation)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
+		return
+	}
+
+	trip.Available -= request.Quantity
+
+	err = s.tripRepository.Update(request.TripID, trip)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return

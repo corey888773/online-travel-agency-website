@@ -29,7 +29,7 @@ type UserRepository interface {
 	FindByUsername(username string) (*User, error)
 	FindAll() ([]User, error)
 	Add(user *User) (string, error)
-	Update(username string, user *User) error
+	Update(username string, user *User) (*User, error)
 	UpdatePassword(username string, password string) error
 	Delete(username string) error
 }
@@ -102,16 +102,43 @@ func (r *MongoDbUserRepository) Add(user *User) (string, error) {
 	return user.ID.Hex(), nil
 }
 
-func (r *MongoDbUserRepository) Update(username string, updatedUser *User) error {
+func (r *MongoDbUserRepository) Update(username string, updatedUser *User) (*User, error) {
 	ctx, cancel := createContext()
 	defer cancel()
 
-	_, err := r.collection.UpdateOne(ctx, primitive.M{"_id": updatedUser.ID}, primitive.M{"$set": updatedUser})
+	user, err := r.FindByUsername(username)
 	if err != nil {
-		return fmt.Errorf("failed to update user: %w", err)
+		return nil, fmt.Errorf("failed to find user: %w", err)
 	}
 
-	return nil
+	if updatedUser.Username != "" {
+		user.Username = updatedUser.Username
+	}
+
+	if updatedUser.FullName != "" {
+		user.FullName = updatedUser.FullName
+	}
+
+	if updatedUser.Email != "" {
+		user.Email = updatedUser.Email
+	}
+
+	if user.TripReservations == nil {
+		user.TripReservations = []TripReservation{}
+	}
+
+	user.UpdatedAt = updatedUser.UpdatedAt
+
+	result, err := r.collection.UpdateOne(ctx, primitive.M{"_id": user.ID}, primitive.M{"$set": user})
+	if err != nil {
+		return nil, fmt.Errorf("failed to update user: %w", err)
+	}
+
+	if result.MatchedCount == 0 {
+		return nil, fmt.Errorf("user not found")
+	}
+
+	return user, nil
 }
 
 func (r *MongoDbUserRepository) UpdatePassword(username string, password string) error {
