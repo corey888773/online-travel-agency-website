@@ -1,28 +1,118 @@
+<style>
+    *{
+        --primary-text-color: #0d6efd;
+        --secondary-text-color: #6c757d;
+    }
+
+    #main{
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        border: 2px solid var(--primary-text-color);
+    }
+
+    #info-panel{
+        flex: 6;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    #header{
+        flex:1;
+    }
+
+    #header h1{
+        text-transform: uppercase;
+    }
+
+    #header p{
+        text-transform: uppercase;
+        color: var(--secondary-text-color);
+    }
+
+    #time-place{
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        box-shadow: 0px 3px 10px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    #time-place p{
+        color: var(--secondary-text-color);
+        font-size: large;
+        margin : 0;
+    }
+
+    #description{
+        min-height: 150px;
+        flex:3;
+
+        box-shadow: 0px 3px 10px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    #availability{
+        transform: translateY(calc(50%));
+        flex: 3;
+        max-height: 150px;
+        display: flex;
+        flex-direction: column-reverse;
+
+        box-shadow: 0px 3px 10px 0 rgba(0, 0, 0, 0.5);
+    }
+    
+    #photo{
+        max-height: 500px;
+        max-width: 100%;
+    }
+
+    @media screen and (max-width: 576px) {
+        #main{
+            flex-direction: column;
+        }
+
+        #info-panel{
+            flex: 1;
+        }
+
+        #availability{
+            flex: 1;
+            transform: translateY(0%);
+        }
+    }
+
+
+</style>
 <section *ngIf="trip">
-    <div class="container border bd-dark rounded">
-        <p class="h1 text-center">{{trip.name}}</p>
+    <div class="container border bd-dark rounded mb-5 p-0">
         <picture>
-            <img [src]="getTripImage()" alt="trip.imgAlt" class="mx-auto d-block mb-5" >
+            <img [src]="getTripImage()" alt="{{trip.imgAlt}}" id="photo" class="mx-auto d-block mb-2 mt-2" >
         </picture>
-        <div class="d-flex flex-row justify-content-around">
-            <div class="d-flex flex-column">
-                <p>Destination: {{trip.destination}}</p>
-                <p>Description: {{trip.description}}</p>
-                <p>Start date: {{trip.startDate}}</p>
-                <p>End date: {{trip.endDate}}</p>
-                <p>Available slots: {{trip.available}}</p>
+        <div id="main" class="container m-3 p-3 ms-0 mb-0 rounded">
+            <div id="info-panel" class="container">
+                <div id="header" class="m-2 p-2">
+                    <h1>{{trip.name}}</h1>
+                    <p>{{trip.destination}}</p>
+                </div>
+                <div id="time-place" class="rounded m-2 p-2">
+
+                    <p>{{formatDate(trip.startDate)}} - {{formatDate(trip.endDate)}}</p>
+                </div>
+                <div id="description" class="rounded m-2 p-2">
+                    <p>{{trip.description}}</p>
+                </div>
             </div>
-            <div class="d-flex flex-column">
-                <p>Price: {{trip.price}}</p>
-                <p>Currency: {{trip.currency}}</p>
-                <p>Max slots: {{trip.maxGuests}}</p>
+            <div id="availability" class="rounded m-3 p-3">
+                <form class="d-flex flex-row" [formGroup]="reservationForm">
+                    <input class="form-control" type="number" id="quantity" formControlName="quantity" placeholder="Number of guests">
+                    <button class="btn btn-primary ps-4 pe-4" type="submit" (click)="reserveTrip()"><i class="fas fa-credit-card"></i></button>
+                </form>
+                <p>Price: {{trip.price}} {{trip.currency}}</p>
+                <p>Available {{trip.available}}/{{trip.maxGuests}}</p>
             </div>
-        </div>
-        <div class="d-flex flex-row justify-content-around">
-            <form class="d-flex flex-row" [formGroup]="reservationForm">
-                <input class="form-control" type="number" id="quantity" formControlName="quantity" placeholder="Number of guests">
-                <button class="btn btn-primary ps-4 pe-4" type="submit" (click)="reserveTrip()">Create Reservation</button>
-            </form>
         </div>
     </div>
 </section>

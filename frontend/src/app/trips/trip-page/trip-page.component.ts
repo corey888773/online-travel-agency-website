@@ -35,7 +35,7 @@ export class TripPageComponent implements OnInit {
     this.tripId = window.location.pathname.split('/').pop()!;
 
     this.reservationForm = this.formBuilder.group({
-      quantity: [1, Validators.required],
+      quantity: ["", Validators.required],
     });
 
 
@@ -64,5 +64,9 @@ export class TripPageComponent implements OnInit {
     } else {
       alert('Could not add trip to cart!');
     }
+  }
+
+  formatDate(date: Date): string {
+    return date.toLocaleDateString();
   }
 }
