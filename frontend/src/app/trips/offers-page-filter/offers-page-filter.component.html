@@ -1,38 +1,120 @@
-<section id="filters" class="container border border-dark rounded p-3">
-    <form>
-        <div class="d-flex flex-column">
-            <input type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (input)="searchFor($event)" placeholder="Search trips">
-            <label for="price">Price</label>
-            <input type="number" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByPriceMin">
-            <input type="number" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByPriceMax">
+<style>
+    #search-sort {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
 
-            <label for="ratings">Ratings</label>
-            <div id="rating-checkboxes">
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[0]" [value]="false">
-                <label for="ratings">0</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[1]" [value]="false">
-                <label for="ratings">1</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[2]" [value]="false">
-                <label for="ratings">2</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[3]" [value]="false">
-                <label for="ratings">3</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[4]" [value]="false">
-                <label for="ratings">4</label>
-                <input type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[5]" [value]="false">
-                <label for="ratings">5</label>
-            </div>
+    #search-field {
+        flex: 1;
+    }
 
-            <label for="destination">Destination</label>
-            <select id="destination" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDestination" [(ngModel)]="filterByDestination">
-                <option *ngFor="let destination of getDestinationOptions()" [value]="destination" >{{destination}}</option>
-            </select>
+    #sorting {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
 
-            <label for="dates">Dates</label>
-            <input type="date" id="dates" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDatesMin">
-            <input type="date" id="dates" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDatesMax">
+    }
 
-            <label for="sortBy">Sort by</label>
-            <select id="sortBy" [ngModelOptions]="{standalone: true}" [(ngModel)]="sortBy">
+    #sorting label {
+        margin: 0;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    #toggle-filters {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    #filters {
+        display: flex;
+        flex-direction: row;
+    }
+
+    #left-column {
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    #left-column > #price-div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #price-div input {
+        width: 50%;
+    }
+
+    label {
+        margin: 0;
+    }
+
+
+    #left-column > #dates-div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #right-column {
+        flex:1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-evenly;
+    }
+
+    #buttons {
+    }
+
+    #rating-checkboxes {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #destination-div {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #buttons {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-evenly;
+    }
+
+
+    @media (max-width: 992px ){
+        #filters {
+            flex-direction: column;
+        }
+    }
+
+
+</style>
+
+<section id="" class="container border border-dark rounded p-3">
+    <div id="search-sort" class="m-2">
+        <div id="search-field">
+            <input class="form-control" type="text" [(ngModel)]="searchTerm" [ngModelOptions]="{standalone: true}" (keydown.enter)="searchFor($event)" placeholder="Search trips">
+        </div>
+        <div id="sorting" class="container">
+            <label for="sortBy" class="me-2">Sort by</label>
+            <select class="form-select" id="sortBy" [ngModelOptions]="{standalone: true}" [(ngModel)]="sortBy" (change)="applyFilters()">
+                <option selected disabled>Sort by</option>
                 <option value="price">Price</option>
                 <option value="-price">Price (descending)</option>
                 <option value="name">Name</option>
@@ -43,7 +125,82 @@
                 <option value="-destination">Destination (descending)</option>
             </select>
         </div>
-        <button type="button" (click)="applyFilters()">Filter</button>
-        <button type="button" (click)="resetFilters()">Reset filters</button>
+    </div>
+    
+    <form *ngIf="expandFilters" >
+        <div id="filters" class="container">
+            <div id="left-column" class="container m-0">
+
+                <div id="price-div" class="p-2">
+                    <label for="price" class="me-2">Price</label>
+                    <input class="form-control" type="number" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByPriceMin" placeholder="{{minPrice}}" [min]="minPrice" [max]="filterByPriceMax ?? maxPrice">
+                    <label for="price" class="ms-2 me-2">to</label>
+                    <input class="form-control" type="number" id="price" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByPriceMax" placeholder="{{maxPrice}}" [min]="filterByPriceMin ?? minPrice" [max]="maxPrice">
+                </div>
+
+
+                <div id="dates-div" class="p-2">
+                    <label for="dates" class="me-2">Dates</label>
+                    <input class="form-control" type="date" id="dates" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDatesMin">
+                    <label for="dates" class="ms-2 me-2">to</label>
+                    <input class="form-control" type="date" id="dates" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDatesMax">
+                </div>
+            </div>
+            <div id="right-column" class="container m-0">
+
+                <div id="rating-checkboxes" class="p-2">
+                    <label for="ratings" class="me-2">Ratings</label>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[0]" [value]="false">
+                        <label class="form-check-label" for="ratings">0</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[1]" [value]="false">
+                        <label class="form-check-label" for="ratings">1</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[2]" [value]="false">
+                        <label class="form-check-label" for="ratings">2</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[3]" [value]="false">
+                        <label class="form-check-label" for="ratings">3</label> 
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[4]" [value]="false">
+                        <label class="form-check-label" for="ratings">4</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="ratings" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByRatings[5]" [value]="false">
+                        <label class="form-check-label" for="ratings">5</label>
+                    </div>
+                </div>
+
+                <div id="destination-div" class="m-2">
+                    <label for="destination" class="me-2">Destination</label>
+                    <select class="form-select" id="destination" [ngModelOptions]="{standalone: true}" [(ngModel)]="filterByDestination" [(ngModel)]="filterByDestination">
+                        <option selected disabled>Select destination</option>
+                        <option *ngFor="let destination of getDestinationOptions()" [value]="destination" >{{destination}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="buttons" class="m-2 ">
+            <button class="btn btn-primary" type="button" (click)="applyFilters()">Filter</button>
+            <button class="btn btn-primary" type="button" (click)="resetFilters()">Reset filters</button>
+        </div>
     </form>
+
+    <div id="toggle-filters">
+        <button class="btn btn-primary" type="button" (click)="expandFilters = !expandFilters">Toggle Filters
+        @if (expandFilters) {
+            <i class="fas fa-chevron-up"></i>
+        }
+        @else {
+            <i class="fas fa-chevron-down"></i>
+        }
+        </button>
+    </div>
+    
 </section>

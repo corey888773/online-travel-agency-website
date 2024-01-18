@@ -35,7 +35,7 @@ export class TripPageComponent implements OnInit {
     this.tripId = window.location.pathname.split('/').pop()!;
 
     this.reservationForm = this.formBuilder.group({
-      quantity: ["", Validators.required],
+      quantity: ["1", Validators.required],
     });
 
 

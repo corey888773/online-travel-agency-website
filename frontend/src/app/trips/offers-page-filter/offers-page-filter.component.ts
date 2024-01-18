@@ -1,10 +1,11 @@
-import { Component, Output, EventEmitter, Input, OnInit, inject } from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Trip } from '../trip';
 import { TripFilterPipe } from '../../trip-filter.pipe';
 import { FormsModule } from '@angular/forms';
 import { GetTripsParams } from '../get-trips-params';
 import { TripService } from '../../services/trip.service';
+import { SimpleChanges } from '@angular/core';
 
 @Component({
   selector: 'app-offers-page-filter',
@@ -24,6 +25,9 @@ export class OffersPageFilterComponent implements OnInit {
   tripService = inject(TripService);
   tripsLength!: number;
 
+  maxPrice!: number;
+  minPrice!: number;
+
   filterByPriceMin : number | undefined;
   filterByPriceMax : number | undefined;
   filterByName: string | undefined;
@@ -35,8 +39,17 @@ export class OffersPageFilterComponent implements OnInit {
   searchTerm: string | undefined;
   sortBy: string | undefined;
   
+  expandFilters: boolean = false;
+
   ngOnInit(): void {
     this.resetFilters();
+    this.setHighestPriceAndLowestPrice();
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['trips'] && changes['trips'].currentValue) {
+      this.setHighestPriceAndLowestPrice();
+    }
   }
 
   applyFilters( ) : void { 
@@ -55,10 +68,10 @@ export class OffersPageFilterComponent implements OnInit {
     }
 
     this.filterParams.emit(params);
+    this.setHighestPriceAndLowestPrice();
   }
 
   resetFilters() : void {
-
     this.filterByPriceMin = undefined;
     this.filterByPriceMax = undefined;
     this.filterByName = undefined;
@@ -84,10 +97,22 @@ export class OffersPageFilterComponent implements OnInit {
 
   searchFor(event: Event) {
       this.searchTerm = (event.target as HTMLInputElement).value;
+      if (this.searchTerm === "") {
+        this.searchTerm = undefined;
+        return;
+      }
       this.applyFilters();
     }
 
   getDestinationOptions() : string[] {
     return [...new Set(this.trips.map(trip => trip.destination))];
+  }
+
+  setHighestPriceAndLowestPrice() : void {
+    if (this.trips) {
+      let prices = this.trips.map(trip => trip.price);
+      this.maxPrice = Math.max(...prices);
+      this.minPrice = Math.min(...prices);
+    }
   }
 }

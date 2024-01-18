@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -156,9 +155,10 @@ func (s *Server) loginUser(ctx *gin.Context) {
 }
 
 type updateUserRequest struct {
-	Username string `json:"username"`
-	Email    string `json:"email"`
-	FullName string `json:"fullName"`
+	Username          string                 `json:"username"`
+	Email             string                 `json:"email"`
+	FullName          string                 `json:"fullName"`
+	TripsReservations []data.TripReservation `json:"tripsReservations"`
 }
 
 func (s *Server) updateUser(ctx *gin.Context) {
@@ -185,10 +185,11 @@ func (s *Server) updateUser(ctx *gin.Context) {
 	}
 
 	user := data.User{
-		Username:  request.Username,
-		Email:     request.Email,
-		FullName:  request.FullName,
-		UpdatedAt: time.Now(),
+		Username:         request.Username,
+		Email:            request.Email,
+		FullName:         request.FullName,
+		TripReservations: request.TripsReservations,
+		UpdatedAt:        time.Now(),
 	}
 
 	updatedUser, err := s.userRepository.Update(pl.Username, &user)
@@ -407,8 +408,6 @@ func (s *Server) renewAccessToken(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
-	fmt.Println(accessTokenPayload)
 
 	ctx.JSON(http.StatusOK, renewAccessTokenResponse{
 		AccessToken:          accessToken,

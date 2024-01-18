@@ -123,6 +123,10 @@ func (r *MongoDbUserRepository) Update(username string, updatedUser *User) (*Use
 		user.Email = updatedUser.Email
 	}
 
+	if updatedUser.TripReservations != nil {
+		user.TripReservations = updatedUser.TripReservations
+	}
+
 	if user.TripReservations == nil {
 		user.TripReservations = []TripReservation{}
 	}

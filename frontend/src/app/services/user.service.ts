@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Session } from '../interfaces/session';
+import { Router } from '@angular/router';
+import { inject } from '@angular/core';
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +14,8 @@ export class UserService {
   baseUrl = 'http://localhost:8000/';
   currentUserSignal = signal<User | undefined | null> (undefined);
   sessionSignal = signal<Session | undefined | null> (undefined);
-
-  constructor(private httpClient : HttpClient ) {}
+  router = inject(Router);
+  httpClient = inject(HttpClient);
 
   public login(username: string, password: string) : Observable<{user: User, session: Session}> {
     const loginUrl = this.baseUrl + 'login';
@@ -64,15 +66,19 @@ export class UserService {
     localStorage.setItem('refresh_token', '');
     localStorage.setItem('refresh_token_expires_at', '');
     localStorage.setItem('session_id', '');
-    sessionStorage.setItem('shopping_cart', '');
+
+    this.router.navigateByUrl('/');
 
     this.currentUserSignal.set(null);
   }
 
-  public renewAccessToken(sessionID : string, refreshToken : string) : Observable<{
+  public renewAccessToken() : Observable<{
     accessToken: string,
     accessTokenExpiresAt: Date,
   }> {
+    const refreshToken = localStorage.getItem('refresh_token');
+    const sessionID = localStorage.getItem('session_id');
+
     const renewTokenUrl = this.baseUrl + 'renewAccess';
 
     return this.httpClient.post(renewTokenUrl, {

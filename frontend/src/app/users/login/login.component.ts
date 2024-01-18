@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
+import { ShoppingCartService } from '../../services/shopping-cart.service';
 
 @Component({
   selector: 'app-login',
@@ -14,6 +15,7 @@ import { Router } from '@angular/router';
 export class LoginComponent {
   fb = inject(FormBuilder);
   userService = inject(UserService);
+  shoppingCartService = inject(ShoppingCartService);
   router = inject(Router);
 
   loginForm = this.fb.group({
@@ -34,7 +36,12 @@ export class LoginComponent {
 
       this.userService.currentUserSignal.set(resp.user);
       this.userService.sessionSignal.set(resp.session);
+      this.shoppingCartService.loadCartFromSessionStorage();
       this.router.navigateByUrl('/');
     })
+  }
+
+  goToRegisterPage(): void {
+    this.router.navigateByUrl('/register');
   }
 }

@@ -1,25 +1,134 @@
-<div>
+<style>
+    #password-section {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    #password-inputs {
+        flex:3;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+    }
+
+    #requirements {
+        flex:2;
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+    }
+
+    #buttons {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .shadowed {
+        box-shadow: 0px 0px 5px 0 rgba(0, 0, 0, 0.5);
+    }
+
+    .left-text {
+        text-align: left;
+        font-size: 0.8rem;
+        margin-top: 2px;
+    }
+
+    .mb-full {
+        margin-bottom: 60vh;
+    }
+
+    @media (max-width: 576px){
+        #password-section {
+            flex-direction: column;
+        }
+
+        #password-inputs {
+        }
+
+        #requirements {
+            width: 100%;
+            padding-left: 0;
+        }
+    }
+
+</style>
+
+<div id="main" class="container border bd-dark rounded p-5 mt-5 mb-full">
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
         <div>
             <label for="username">Username</label>
-            <input type="text" formControlName="username" id="username">
+            <input class="form-control shadowed" type="text" formControlName="username" id="username">
         </div>
         <div>
             <label for="email">Email</label>
-            <input type="text" formControlName="email" id="email">
+            <input class="form-control shadowed" type="text" formControlName="email" id="email">
         </div>
         <div>
             <label for="full_name">Full Name</label>
-            <input type="text" formControlName="fullName" id="full_name">
+            <input class="form-control shadowed" type="text" formControlName="fullName" id="full_name">
         </div>
-        <div>
-            <label for="password">Password</label>
-            <input type="password" formControlName="password" id="password">
+        <div id="password-section">
+            <div id="password-inputs">
+                <div class="container-fluid p-0">
+                    <label for="password">Password</label>
+                    <input class="form-control shadowed" type="password" formControlName="password" (input)="validatePassword()" id="password">
+                </div>
+                <div class="container-fluid p-0">
+                    <label for="confirm_password">Confirm Password</label>
+                    <input class="form-control shadowed" type="password" formControlName="confirmPassword" id="confirm_password">
+                </div>
+            </div>
+            <ul id="requirements">
+                <p class="h5 mt-2">Password requirements:</p>
+                @if (passwordLengthValid === undefined) {
+                    <li class="btn left-text btn-outline-secondary"><i class="bi bi-exclamation-circle-fill"></i> at least 8 characters</li>
+                }
+                @if (passwordLengthValid === false) {
+                    <li class="btn left-text btn-outline-danger"><i class="bi bi-x-circle-fill"></i> at least 8 characters</li>
+                }
+                @if (passwordLengthValid === true) {
+                    <li class="btn left-text btn-outline-success"><i class="bi bi-check-circle-fill"></i> at least 8 characters</li>
+                }
+
+                @if (passwordSpecialCharacterValid === undefined) {
+                    <li class="btn left-text btn-outline-secondary"><i class="bi bi-exclamation-circle-fill"></i> at least one special character</li>
+                }
+                @if (passwordSpecialCharacterValid === false) {
+                    <li class="btn left-text btn-outline-danger"><i class="bi bi-x-circle-fill"></i> at least one special character</li>
+                }
+                @if (passwordSpecialCharacterValid === true) {
+                    <li class="btn left-text btn-outline-success"><i class="bi bi-check-circle-fill"></i> at least one special character</li>
+                }
+
+                @if (passwordCapitalLetterValid === undefined) {
+                    <li class="btn left-text btn-outline-secondary"><i class="bi bi-exclamation-circle-fill"></i> at least one capital letter</li>
+                }
+                @if (passwordCapitalLetterValid === false) {
+                    <li class="btn left-text btn-outline-danger"><i class="bi bi-x-circle-fill"></i> at least one capital letter</li>
+                }
+                @if (passwordCapitalLetterValid === true) {
+                    <li class="btn left-text btn-outline-success"><i class="bi bi-check-circle-fill"></i> at least one capital letter</li>
+                }
+
+                @if (passwordDigitValid === undefined) {
+                    <li class="btn left-text btn-outline-secondary"><i class="bi bi-exclamation-circle-fill"></i> at least one digit</li>
+                }
+                @if (passwordDigitValid === false) {
+                    <li class="btn left-text btn-outline-danger"><i class="bi bi-x-circle-fill"></i> at least one digit</li>
+                }
+                @if (passwordDigitValid === true) {
+                    <li class="btn left-text btn-outline-success"><i class="bi bi-check-circle-fill"></i> at least one digit</li>
+                }
+            </ul>
         </div>
-        <div>
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" formControlName="confirmPassword" id="confirm_password">
+        <div id="buttons" class="mt-2">
+            <button class="btn btn-primary" type="submit">Register</button>
         </div>
-        <button type="submit">Sign Up</button>
     </form>
 </div>

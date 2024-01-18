@@ -1,2 +1,4 @@
-<p>my-trips-page works!</p>
 <app-trip-reservation [tripReservation]="reservation" *ngFor="let reservation of myReservations"></app-trip-reservation>
+<div *ngIf="myReservations.length === 0" class="m-3">
+    <p class="h2 text-center">You have no reservations.</p>
+</div>

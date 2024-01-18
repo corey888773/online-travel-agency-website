@@ -1,16 +1,20 @@
-<div class="container border-dark border p-3 pt-0">
-<section id="stats" class="container d-flex flex-row justify-content-around align-items-center">
-    <div id="counter">
-        <p>Number of offers: {{trips.length}}</p>
-        <p>Number of reserved offers: {{countReservedTrips()}}</p>
-    </div>
-</section>
+<style>
+        .mb-full {
+        margin-bottom: 20vh;
+    }
+</style>
 
-<section id="filters">
-    <app-offers-page-filter [trips]="trips" (filterParams)="filterTrips($event)"></app-offers-page-filter>
-</section>
-<app-trip *ngFor="let trip of trips" 
-[trip]="trip" 
-[borderColour]="calculateTripColour(trip)"
-(removeTrip)="removeTrip($event)"></app-trip>
+<div class="container bd-dark border p-3 pt-0 mt-5 rounded mb-full">
+    <section id="filters" class="mt-3">
+        <app-offers-page-filter [trips]="trips" (filterParams)="filterTrips($event)"></app-offers-page-filter>
+    </section>
+    <section id="stats" class="container d-flex flex-row justify-content-around align-items-center">
+        <div id="counter">
+            <p>Number of offers: {{trips.length}}</p>
+        </div>
+    </section>
+    <app-trip *ngFor="let trip of trips" 
+    [trip]="trip" 
+    [borderColour]="calculateTripColour(trip)"
+    (removeTrip)="removeTrip($event)"></app-trip>
 </div>

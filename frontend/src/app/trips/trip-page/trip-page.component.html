@@ -31,26 +31,30 @@
         color: var(--secondary-text-color);
     }
 
-    #time-place{
+    #dates{
         flex:1;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
+
+
+
+        max-height: 50px;
 
         box-shadow: 0px 3px 10px 0 rgba(0, 0, 0, 0.5);
     }
 
-    #time-place p{
+    #dates p{
         color: var(--secondary-text-color);
         font-size: large;
         margin : 0;
     }
 
     #description{
-        min-height: 150px;
         flex:3;
-
+        min-height: 150px;
+        overflow: scroll;
         box-shadow: 0px 3px 10px 0 rgba(0, 0, 0, 0.5);
     }
 
@@ -67,6 +71,10 @@
     #photo{
         max-height: 500px;
         max-width: 100%;
+    }
+
+    .mb-full {
+        margin-bottom: 30vh;
     }
 
     @media screen and (max-width: 576px) {
@@ -87,7 +95,7 @@
 
 </style>
 <section *ngIf="trip">
-    <div class="container border bd-dark rounded mb-5 p-0">
+    <div class="container border bd-dark rounded mt-5 mb-full p-0">
         <picture>
             <img [src]="getTripImage()" alt="{{trip.imgAlt}}" id="photo" class="mx-auto d-block mb-2 mt-2" >
         </picture>
@@ -97,8 +105,7 @@
                     <h1>{{trip.name}}</h1>
                     <p>{{trip.destination}}</p>
                 </div>
-                <div id="time-place" class="rounded m-2 p-2">
-
+                <div id="dates" class="rounded m-2 p-2">
                     <p>{{formatDate(trip.startDate)}} - {{formatDate(trip.endDate)}}</p>
                 </div>
                 <div id="description" class="rounded m-2 p-2">
@@ -107,10 +114,10 @@
             </div>
             <div id="availability" class="rounded m-3 p-3">
                 <form class="d-flex flex-row" [formGroup]="reservationForm">
-                    <input class="form-control" type="number" id="quantity" formControlName="quantity" placeholder="Number of guests">
+                    <input class="form-control" type="number" id="quantity" formControlName="quantity" placeholder="Number of guests" [max]="trip.available" [min]="0">
                     <button class="btn btn-primary ps-4 pe-4" type="submit" (click)="reserveTrip()"><i class="fas fa-credit-card"></i></button>
                 </form>
-                <p>Price: {{trip.price}} {{trip.currency}}</p>
+                <p>Price: {{trip.price * ( reservationForm.value.quantity ?? 0 )}} {{trip.currency}}</p>
                 <p>Available {{trip.available}}/{{trip.maxGuests}}</p>
             </div>
         </div>

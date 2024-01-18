@@ -44,13 +44,14 @@ export class OffersPageComponent implements OnInit{
   calculateTripColour(trip : Trip): string {
     // gradient from green to red based on index price
     // 0 - green, 1 - red
-    const minPrice = this.trips[0].price;
-    const maxPrice = this.trips[this.trips.length - 1].price;
+    let tripsCopy = this.trips.slice();
+    const sortedByPrice = tripsCopy.sort((a, b) => a.price - b.price);
+    const tripIndex = sortedByPrice.findIndex(t => t.name === trip.name);
 
-    const index = (trip.price - minPrice) / (maxPrice - minPrice);
+    const relativeIndex = tripIndex/(this.trips.length - 1);
 
-    const red = Math.round(255 * index);
-    const green = Math.round(255 * (1 - index));
+    const red = Math.round(255 * relativeIndex);
+    const green = Math.round(255 * (1 - relativeIndex));
     const blue = 0;
     return `rgb(${red}, ${green}, ${blue})`;
   }

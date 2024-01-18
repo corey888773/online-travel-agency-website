@@ -154,6 +154,7 @@
                 <h1> {{trip.name}}</h1>
                 <div id="description">
                     <p>Destination: {{trip.destination}}</p>
+                    <p>Rating: {{trip.averageRating}}/5</p>
                     <p>Available slots: {{trip.available}}</p>
                 </div>
                 <div id="dates">
@@ -174,10 +175,12 @@
             <div id="trip-page-button">
                 <button class="btn btn-primary round-button" (click)="goToTripPage()"><i class="fas fa-arrow-right"></i></button>
             </div>
-            <div *ngIf="isAdmin()" id="trip-page-button">
+            <div *ngIf="isAdmin()" id="trip-update-page-button">
                 <button class="btn btn-primary round-button" (click)="goToUpdateTripPage()"><i class="fas fa-edit"></i></button>
+            </div>
+            <div *ngIf="isAdmin()" id="trip-delete-button">
+                <button class="btn btn-danger round-button" (click)="deleteTrip()"><i class="fas fa-trash"></i></button>
             </div>
         </div>
     </div>    
-    
 </section>

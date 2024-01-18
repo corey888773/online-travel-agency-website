@@ -61,6 +61,8 @@ export class TripService {
             startDate: new Date(trip.startDate),
             endDate: new Date(trip.endDate),
             currency: trip.currency,
+            averageRating: trip.averageRating,
+            ratings: trip.ratings,
           };
           return tripObj;
           });
@@ -75,6 +77,10 @@ export class TripService {
 
   public updateTrip(trip : Trip) : Observable<Trip> {
     return this.httpClient.patch<Trip>(this.baseUrl + trip.id, trip);
+  }
+
+  public deleteTrip(id : string) : Observable<Trip> {
+    return this.httpClient.delete<Trip>(this.baseUrl + id);
   }
 
   public getTrip(id : string) : Observable<Trip> {
@@ -99,7 +105,6 @@ export class TripService {
           ratings: response.trip.ratings,
         };
 
-        console.log(trip);
         return trip;
       }));
   }

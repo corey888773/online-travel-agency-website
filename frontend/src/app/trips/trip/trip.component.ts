@@ -4,6 +4,7 @@ import { Trip } from '../trip';
 import { Router} from '@angular/router';
 import { FileService } from '../../services/file.service';
 import { UserService } from '../../services/user.service';
+import { TripService } from '../../services/trip.service';
 
 @Component({
   selector: 'app-trip',
@@ -21,6 +22,7 @@ export class TripComponent implements OnInit {
   router = inject(Router);
   fileService = inject(FileService);
   userService = inject(UserService);
+  tripService = inject(TripService);
 
   ngOnInit(): void {
     this.adjustedPrice = this.trip.price.toFixed(2);
@@ -82,6 +84,21 @@ export class TripComponent implements OnInit {
 
   isAdmin() : boolean {
     return this.userService.currentUserSignal()?.role === 'admin';
+  }
+
+  deleteTrip(): void {
+    // show alert
+    // if confirmed delete trip
+
+    this.tripService.deleteTrip(this.trip.id!).subscribe({
+      next: (resp) => {
+        this.router.navigateByUrl('/trips');
+        this.removeTrip.emit(this.trip);
+      },
+      error: (err) => {
+        alert(err.error);
+      }
+    });
   }
 
   formatDate(date: Date): string {

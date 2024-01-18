@@ -1,7 +1,8 @@
-import { Injectable, signal} from '@angular/core';
+import { Injectable, signal, inject} from '@angular/core';
 import { ShoppingCart } from '../orders/shopping-cart';
 import { Trip } from '../trips/trip';
 import { ShoppingCartItem } from '../orders/shopping-cart';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,8 @@ export class ShoppingCartService{
     totalPrice: 0,
     currency: 'USD',
   });
+
+  userService = inject(UserService);
 
   constructor() { 
     this.loadCartFromSessionStorage();
@@ -78,20 +81,55 @@ export class ShoppingCartService{
   }
 
   saveCartInSessionStorage() {
-    sessionStorage.setItem('shoppingCart', JSON.stringify(this.shoppingCartSignal()));
+    let username = this.userService.currentUserSignal()?.username;
+    if (!username) {
+      return;
+    }
+
+    this.shoppingCartSignal.update((shoppingCart) => {
+      shoppingCart.username = username!;
+      return shoppingCart;
+    });
+
+    sessionStorage.setItem('shopping_cart', JSON.stringify(this.shoppingCartSignal()));
   }
 
-  loadCartFromSessionStorage() {
+  async loadCartFromSessionStorage() {
+    let user = this.userService.currentUserSignal();
+    let shoppingCartJson = sessionStorage.getItem('shopping_cart');
+
+    let counter = 0;
+    // workaround
+    while (!user && counter < 10) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+      counter++;
+      user = this.userService.currentUserSignal();
+    }
+
+    console.log(user);
+    console.log(shoppingCartJson);
+
     // check if there is a shopping cart in session storage
-    if (!sessionStorage.getItem('shoppingCart')) {
+    if (!shoppingCartJson || !user) {
+      this.clearCart();
       return;
     }
 
-    let shoppingCart = JSON.parse(sessionStorage.getItem('shoppingCart') || '{}');
-    if (!shoppingCart) {
+    let savedCart = JSON.parse(sessionStorage.getItem('shopping_cart') || '{}');
+    if (!savedCart) {
+      this.clearCart();
       return;
     }
-    this.shoppingCartSignal = signal<ShoppingCart>(shoppingCart);
+
+    console.log(user);
+    console.log(savedCart);
+
+    if (savedCart.username !== user!.username) {
+      this.clearCart();
+      return;
+    }
+
+    this.shoppingCartSignal.set(savedCart);
   }
 
   removeItem(item: ShoppingCartItem) {
@@ -108,6 +146,8 @@ export class ShoppingCartService{
     this.shoppingCartSignal.update((shoppingCart) => {
       shoppingCart.items = [];
       shoppingCart.totalPrice = 0;
+      shoppingCart.username = '';
+      shoppingCart.currency = 'USD';
       return shoppingCart;
     });
 

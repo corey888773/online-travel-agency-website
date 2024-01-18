@@ -38,6 +38,7 @@ func (s *Server) addTrip(ctx *gin.Context) {
 		Name:          request.Name,
 		UnitPrice:     request.UnitPrice,
 		Destination:   request.Destination,
+		Description:   request.Description,
 		StartDate:     request.StartDate,
 		EndDate:       request.EndDate,
 		ImgUrl:        request.ImgUrl,
